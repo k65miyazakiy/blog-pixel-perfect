@@ -1,0 +1,82 @@
+---
+title: "Sample Markdown Reference Page"
+createdAt: "2030-12-01"
+updatedAt: "2030-12-01"
+tags:
+  - markdown
+  - sample
+development: true
+---
+
+# 見出し 1
+
+## 見出し 2
+
+### 見出し 3
+
+#### 見出し 4
+
+##### 見出し 5
+
+###### 見出し 6
+
+---
+
+これは通常のテキストブロックです。lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+テキストブロック2です。lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+**太字**
+
+_斜体_
+
+~~取り消し線~~
+
+---
+
+<BQ> これは引用です。</BQ>
+<BQ source="aaaa"> これは引用元を含んだ引用です。</BQ>
+<BQ source="aaaa" sourceAddr="http://github.com">
+  これは引用元およびアドレスを含んだ引用です。
+</BQ>
+<BQ source="aaaa" sourceAddr="http://github.com" author="John Doe">
+  これは引用元およびアドレス, 著者名を含んだ引用です。
+</BQ>
+
+---
+
+- 箇条書きリスト
+  - ネストされたリスト
+    - さらにネスト
+
+1. 番号付きリスト
+2. 番号付きリスト
+   1. ネストされた番号付きリスト
+   2. ネストされた番号付きリスト
+
+---
+
+[リンクテキスト](https://example.com)
+
+---
+
+`インラインコード`
+
+```javascript
+// コードブロック
+function helloWorld() {
+  console.log("Hello, world!");
+}
+```
+
+<CB
+  lang="javascript"
+  fileName="sample.js"
+  content={`\
+  // コードブロック
+  function helloWorld() {
+    console.log("Hello, world!");
+  }`}
+/>
+
+<Test />

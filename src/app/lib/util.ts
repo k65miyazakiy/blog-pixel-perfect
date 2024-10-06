@@ -1,0 +1,83 @@
+import fs from "fs";
+import matter from "gray-matter";
+import { serialize } from "next-mdx-remote/serialize";
+import path from "path";
+import remarkGfm from "remark-gfm";
+
+const postsDirectory = path.join(process.cwd(), "content/posts");
+
+export type Post = {
+  slug: string[];
+  frontMatter: ArticleMeta;
+  source: any;
+};
+
+export type ArticleMeta = {
+  title: string;
+  // author: string;
+  createdAt: string;
+  updatedAt?: string;
+  tags?: string[];
+};
+
+export const getLatestPostsMeta = async (count: number) => {
+  const allPostsMeta = await getPostsMeta();
+  const latestPostsMeta = allPostsMeta
+    .sort((a, b) => {
+      return (
+        new Date(b.frontMatter.createdAt).getTime() -
+        new Date(a.frontMatter.createdAt).getTime()
+      );
+    })
+    .slice(0, count);
+  return latestPostsMeta;
+};
+
+export const getPostsMeta = async () => {
+  const dirEnts = fs.readdirSync(postsDirectory, {
+    recursive: true,
+    withFileTypes: true,
+  });
+  console.log(dirEnts);
+  const posts = dirEnts
+    .filter((dirEnt) => dirEnt.isFile())
+    .map((dirEnt) => {
+      const fullPath = `${dirEnt.parentPath}/${dirEnt.name}`;
+      const slug = fullPath.replace(postsDirectory, "").replace(/\.mdx$/, "");
+      const fileContents = fs.readFileSync(fullPath, "utf8");
+      const { data: frontMatter } = matter(fileContents);
+      return {
+        slug: slug,
+        frontMatter: {
+          title: frontMatter.title,
+          createdAt: frontMatter.createdAt,
+          updatedAt: frontMatter.updatedAt,
+          tags: frontMatter.tags,
+        },
+      };
+    });
+  return posts;
+};
+
+export const getPost = async (slug: string[]) => {
+  const fullPath = path.join(postsDirectory, `${slug.join("/")}.mdx`);
+  const fileContents = fs.readFileSync(fullPath, "utf8");
+  const { content, data: frontMatter } = matter(fileContents);
+  const mdxSource = await serialize(content, {
+    mdxOptions: {
+      remarkPlugins: [remarkGfm],
+    },
+  });
+  const aPost: Post = {
+    slug: slug,
+    frontMatter: {
+      title: frontMatter.title,
+      // author: frontMatter.author,
+      createdAt: frontMatter.createdAt,
+      updatedAt: frontMatter.updatedAt,
+      tags: frontMatter.tags,
+    },
+    source: mdxSource,
+  };
+  return aPost;
+};
