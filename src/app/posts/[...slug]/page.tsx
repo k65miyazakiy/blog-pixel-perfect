@@ -3,7 +3,7 @@ import { TimeStamp } from "@/app/components/TimeStamp";
 import { getPost } from "@/app/lib/util";
 import fs from "fs";
 import path from "path";
-import { MDXRenderer } from "../../../../mdx-components/MDXRenderer";
+import { MDXRenderer } from "./mdx-components/MDXRenderer";
 
 const postsDirectory = path.join(process.cwd(), "content/posts");
 
