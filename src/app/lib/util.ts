@@ -24,10 +24,6 @@ export type ArticleMeta = {
   tags?: string[];
 };
 
-export const isDevelopmentPost = (slug: string[]) => {
-  return slug[0] === "develop || wip";
-};
-
 export const getLatestPostsMeta = async (count: number) => {
   const allPostsMeta = await getPostsMeta();
   const latestPostsMeta = allPostsMeta
@@ -62,6 +58,13 @@ export const getPostsMeta = async () => {
           tags: frontMatter.tags,
         },
       };
+    })
+    .filter((post) => {
+      return process.env.NODE_ENV === "production"
+        ? post.slug.startsWith("/develop") || post.slug.startsWith("/wip")
+          ? false
+          : true
+        : true;
     });
   return posts;
 };
