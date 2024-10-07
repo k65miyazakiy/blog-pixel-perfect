@@ -1,11 +1,15 @@
 import { Tags } from "@/app/components/Tags";
 import { TimeStamp } from "@/app/components/TimeStamp";
-import { getPost, isDevelopmentPost } from "@/app/lib/util";
+import { getPost } from "@/app/lib/util";
 import fs from "fs";
 import path from "path";
 import { MDXRenderer } from "../../../../mdx-components/MDXRenderer";
 
 const postsDirectory = path.join(process.cwd(), "content/posts");
+
+type Slug = {
+  slug: string[];
+};
 
 export default async function Post({ params }: { params: { slug: string[] } }) {
   const { slug } = params;
@@ -31,27 +35,31 @@ export default async function Post({ params }: { params: { slug: string[] } }) {
   );
 }
 
-export function generateStaticParams() {
-  const fileNames = fs.readdirSync(postsDirectory, {
+export async function generateStaticParams() {
+  const candidates = fs.readdirSync(postsDirectory, {
     recursive: true,
     withFileTypes: true,
   });
 
-  return fileNames
-    .map((fileName) => {
-      const slugs = fileName
-        .toString()
+  const slugs: Slug[] = candidates
+    .filter((cand) => cand.isFile())
+    .map((cand) => {
+      const slugs = `${cand.parentPath}/${cand.name}`
+        .replace(postsDirectory, "")
         .replace(/\.mdx$/, "")
-        .split("/");
+        .split("/")
+        .filter((s) => s !== "");
       return {
-        params: {
-          slug: slugs,
-        },
+        slug: slugs,
       };
     })
-    .filter((param) => {
+    .filter((slug) =>
+      // content/posts/(develop|wip)は開発中の記事なのでビルドの対象にはしない
       process.env.NODE_ENV === "production"
-        ? isDevelopmentPost(param.params.slug)
-        : true;
-    });
+        ? ["develop", "wip"].includes(slug.slug[0])
+          ? false
+          : true
+        : true,
+    );
+  return slugs;
 }
