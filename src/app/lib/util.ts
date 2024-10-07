@@ -1,5 +1,6 @@
 import fs from "fs";
 import matter from "gray-matter";
+import { MDXRemoteSerializeResult } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
 import path from "path";
 import remarkGfm from "remark-gfm";
@@ -9,7 +10,10 @@ const postsDirectory = path.join(process.cwd(), "content/posts");
 export type Post = {
   slug: string[];
   frontMatter: ArticleMeta;
-  source: any;
+  source: MDXRemoteSerializeResult<
+    Record<string, unknown>,
+    Record<string, unknown>
+  >;
 };
 
 export type ArticleMeta = {
@@ -18,6 +22,10 @@ export type ArticleMeta = {
   createdAt: string;
   updatedAt?: string;
   tags?: string[];
+};
+
+export const isDevelopmentPost = (slug: string[]) => {
+  return slug[0] === "develop || wip";
 };
 
 export const getLatestPostsMeta = async (count: number) => {
@@ -38,7 +46,6 @@ export const getPostsMeta = async () => {
     recursive: true,
     withFileTypes: true,
   });
-  console.log(dirEnts);
   const posts = dirEnts
     .filter((dirEnt) => dirEnt.isFile())
     .map((dirEnt) => {

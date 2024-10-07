@@ -1,11 +1,10 @@
 import { Tags } from "@/app/components/Tags";
 import { TimeStamp } from "@/app/components/TimeStamp";
-import { getPost } from "@/app/lib/util";
+import { getPost, isDevelopmentPost } from "@/app/lib/util";
 import fs from "fs";
 import path from "path";
-import { MDXRenderer } from "./MDXRenderer";
+import { MDXRenderer } from "../../../../mdx-components/MDXRenderer";
 
-export const dynamic = "force-static";
 const postsDirectory = path.join(process.cwd(), "content/posts");
 
 export default async function Post({ params }: { params: { slug: string[] } }) {
@@ -32,21 +31,27 @@ export default async function Post({ params }: { params: { slug: string[] } }) {
   );
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const fileNames = fs.readdirSync(postsDirectory, {
     recursive: true,
     withFileTypes: true,
   });
 
-  return fileNames.map((fileName) => {
-    const slugs = fileName
-      .toString()
-      .replace(/\.mdx$/, "")
-      .split("/");
-    return {
-      params: {
-        slug: slugs,
-      },
-    };
-  });
+  return fileNames
+    .map((fileName) => {
+      const slugs = fileName
+        .toString()
+        .replace(/\.mdx$/, "")
+        .split("/");
+      return {
+        params: {
+          slug: slugs,
+        },
+      };
+    })
+    .filter((param) => {
+      process.env.NODE_ENV === "production"
+        ? isDevelopmentPost(param.params.slug)
+        : true;
+    });
 }

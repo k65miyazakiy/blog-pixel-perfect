@@ -1,7 +1,7 @@
 "use client";
 
-import MDXComponents from "@/app/posts/[...slug]/mdx-components";
 import { MDXRemote, MDXRemoteSerializeResult } from "next-mdx-remote";
+import MDXComponents from ".";
 
 export const MDXRenderer = ({
   source,
