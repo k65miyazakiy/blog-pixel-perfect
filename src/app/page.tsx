@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArticleListCard } from "./components/ArticleListCard";
 import { getLatestPostsMeta } from "./lib/util";
 
@@ -10,9 +11,9 @@ export default async function Home() {
       <ul className="mt-4 flex flex-col items-center gap-4">
         {latestPosts.map((post) => (
           <li key={post.slug}>
-            <a href={`/posts/${post.slug}`}>
+            <Link href={`/posts${post.slug}`}>
               <ArticleListCard {...post.frontMatter} />
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
