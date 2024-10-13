@@ -35,7 +35,7 @@ export default async function Post({ params }: { params: { slug: string[] } }) {
   );
 }
 
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const candidates = fs.readdirSync(postsDirectory, {
     recursive: true,
     withFileTypes: true,

@@ -24,8 +24,8 @@ export type ArticleMeta = {
   tags?: string[];
 };
 
-export const getLatestPostsMeta = async (count: number) => {
-  const allPostsMeta = await getPostsMeta();
+export const getLatestPostsMeta = (count: number) => {
+  const allPostsMeta = getPostsMeta();
   const latestPostsMeta = allPostsMeta
     .sort((a, b) => {
       return (
@@ -37,7 +37,7 @@ export const getLatestPostsMeta = async (count: number) => {
   return latestPostsMeta;
 };
 
-export const getPostsMeta = async () => {
+export const getPostsMeta = () => {
   const dirEnts = fs.readdirSync(postsDirectory, {
     recursive: true,
     withFileTypes: true,
