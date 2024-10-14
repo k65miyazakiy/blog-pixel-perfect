@@ -19,7 +19,7 @@ jobs:
       - run: npm run build
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
-          aws-region: ${{ env.AWS_REGION }}
-      - run: aws s3 sync ./out s3://${{ env.BLOG_BUCKET_NAME }} --delete
+          aws-region: ${{ vars.AWS_REGION }}
+      - run: aws s3 sync ./out s3://${{ vars.BLOG_BUCKET_NAME }} --delete
