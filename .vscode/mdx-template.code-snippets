@@ -1,0 +1,18 @@
+{
+  "Blog Post Template": {
+    "prefix": "blogTemplate",
+    "body": [
+      "---",
+      "title: \"$1\"",
+      "createdAt: \"$2\"",
+      "tags:",
+      "  - $3",
+      "type: \"$4\"",
+      "genre: \"$5\"",
+      "---",
+      "",
+      "$6",
+    ],
+    "description": "Template for a blog post in MDX format",
+  },
+}
