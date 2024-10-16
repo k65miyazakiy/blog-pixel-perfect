@@ -26,15 +26,13 @@ export type ArticleMeta = {
 
 export const getLatestPostsMeta = (count: number) => {
   const allPostsMeta = getPostsMeta();
-  const latestPostsMeta = allPostsMeta
-    .sort((a, b) => {
-      return (
-        new Date(b.frontMatter.createdAt).getTime() -
-        new Date(a.frontMatter.createdAt).getTime()
-      );
-    })
-    .slice(0, count);
-  return latestPostsMeta;
+  const latestPostsMeta = allPostsMeta.sort((a, b) => {
+    return (
+      new Date(b.frontMatter.createdAt).getTime() -
+      new Date(a.frontMatter.createdAt).getTime()
+    );
+  });
+  return count === -1 ? latestPostsMeta : latestPostsMeta.slice(0, count);
 };
 
 export const getPostsMeta = () => {
