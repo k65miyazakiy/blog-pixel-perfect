@@ -34,15 +34,6 @@ _斜体_
 
 ---
 
-<BQ> これは引用です。</BQ>
-<BQ source="aaaa"> これは引用元を含んだ引用です。</BQ>
-<BQ source="aaaa" sourceAddr="http://github.com">
-  これは引用元およびアドレスを含んだ引用です。
-</BQ>
-<BQ source="aaaa" sourceAddr="http://github.com" author="John Doe">
-  これは引用元およびアドレス, 著者名を含んだ引用です。
-</BQ>
-
 ---
 
 - 箇条書きリスト
@@ -69,6 +60,29 @@ function helloWorld() {
 }
 ```
 
+## カスタムコンポーネント
+
+### テストコンポーネント
+
+<Test />
+
+### 引用
+
+<BQ> これは引用です。</BQ>
+<BQ source="aaaa"> これは引用元を含んだ引用です。</BQ>
+<BQ source="aaaa" sourceAddr="http://github.com">
+  これは引用元およびアドレスを含んだ引用です。
+</BQ>
+<BQ source="aaaa" sourceAddr="http://github.com" author="John Doe">
+  これは引用元およびアドレス, 著者名を含んだ引用です。
+</BQ>
+
+### Info, Warn, Error
+
+<Info message="This is information message." />
+
+### コードブロック
+
 <CB
   lang="javascript"
   fileName="sample.js"
@@ -78,5 +92,3 @@ function helloWorld() {
     console.log("Hello, world!");
   }`}
 />
-
-<Test />

@@ -1,6 +1,7 @@
 import { ClassAttributes, HTMLAttributes } from "react";
 import { BQ } from "./BQ";
 import { CB } from "./CB";
+import { Info } from "./Callouts";
 import { Test } from "./Test";
 
 export type Attrs = JSX.IntrinsicAttributes &
@@ -11,6 +12,7 @@ const MDXComponents = {
   Test,
   BQ, // BlockQuote
   CB, // CodeBlock
+  Info,
 };
 
 export default MDXComponents;
