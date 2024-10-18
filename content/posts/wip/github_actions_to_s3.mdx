@@ -1,13 +1,147 @@
 ---
-title: "アクセスキーを使わずに、GitHub Actionsでビルドした静的サイトをS3にデプロイする。"
-createdAt: "2024-10-014"
+title: "OpenID Connectを構成してGitHub ActionsからAWS S3にアクセスする。"
+createdAt: "2024-10-14"
 tags:
   - tech
   - aws
   - github
-development: true
+type: "tecktips"
 ---
 
-https://docs.github.com/ja/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
-https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html
-https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_create_for-custom.html
+## はじめに
+
+本サイトはNextJSで静的ビルドした資材をAWS S3バケットをオリジンにして公開しています。
+S3の更新方法としてはプッシュをトリガーに起動したGithub Actionsを用いてーというところまでは大雑把に決めていましたが、GithubからAWSのリソースにアクセスする方法についてアクセスキーを使うのはなんだかなといったところでした。
+
+紆余曲折の結果、GithubからAWSへOpenID Connectを構成する方法があったことを知り、これを利用することでパイプライン上に認証情報を載せずにS3の更新を行うアーキテクチャを構成しました。
+OpenID Connectを利用したGithub Actionsからクラウドリソースへのアクセスについては、 [OpenID Connect を使ったセキュリティ強化について](https://docs.github.com/ja/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect) にも詳しく紹介があります。
+
+## OpenID Connectを利用するメリット
+
+メリットの要点としては
+
+- クラウドのシークレット情報が不要
+  - 「Githubのこのレポジトリ、ブランチに関連するActionにはこの権限を付与する」といった設定を行うことになります。
+- トークンの自動ローテート
+  - クラウドリソースのアクセスには短命のトークンが利用されるため、トークンの漏洩によるリスクを軽減できます。
+
+などです。シークレットキーに関わらず、認証情報をどこかに載せるのは避けたい気持ちがあったのでこの方法を採用しました。envなどは基本的にignoreしていますが、ヒューマンはエラーするものなので。
+
+とまあメリットも多い構成ですが、その道中少々苦労する箇所があったので、本稿では以下、手順の説明を書き記しておきます。
+
+なお、本記事での構築手順は概ね次の公式ドキュメントの内容に沿ったものです。
+
+- [アマゾン ウェブ サービスでの OpenID Connect の構成](https://docs.github.com/ja/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
+- [OpenID Connect フェデレーション用のロールを作成する](https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html)
+
+<Info message="AWSやGithubへの基本的なアクセス権はもっている前提とします。" />
+
+## 1. OpenID Connect構成の統合用ロールを作成する
+
+はじめに、Github Actionsからのアクセスを許可するためのロールをAWS側に作成します。
+
+AWSのロールは2つのポリシーから成り立っており、それぞれ「このロールが何を許可するか」と「誰がこのロールを引き受けることができるか」を指定します。後者は特に信頼ポリシーと呼ばれます。
+なので具体的にはこの手順では、前者ではGithub Actionsで処理したいリソースと操作を（例えばS3への更新権限）指定して、後者ではこのレポジトリに登録されたGithub Actionsを信頼する、という設定を行います。
+
+### 1-1. IDプロパイダの登録
+
+OIDCなので、IDプロパイダが必要です。まずはこれをAWSに登録します。IDプロパイダという用語になじみがない場合、意味的には認証情報レジストリなどと読み替えてもらってもよいです。
+AWSのIAMではデフォルトではGithubはIDプロバイダとして登録されていないので、まずはGithubをIDプロバイダとして登録します。
+
+1. AWSコンソールの「IAM」から「IDプロバイダ」を選択
+2. 「IDプロバイダの追加」より、Github OIDCプロパイダを追加
+
+入力内容は [AWS への ID プロバイダーの追加](https://docs.github.com/ja/actions/security-for-github-actions/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services#adding-the-identity-provider-to-aws) の通りです。
+
+### 1-2. ロールの作成
+
+次に、先ほど登録したIDプロバイダを信頼するロールを作成します。
+
+1. AWSの「IAM」より「ロールを作成」を選択
+2. 「信頼されたエンティティタイプ」で「カスタム信頼ポリシー」を選択し、カスタム信頼ポリシーを入力（後述）し、次へ
+3. 「許可を追加」で、Github Actionsで行いたい操作に対するポリシーを追加
+4. その他の入力を任意入力で行い、ロールを作成
+
+項番2のカスタム信頼ポリシーの入力例は次のようになります。
+
+<CB
+  lang="json"
+  fileName="trust-policy.json"
+  content={`\
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "{1.1で登録したIDプロパイダのARN} -- (1)"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                    "token.actions.githubusercontent.com:sub": "repo:{組織ID}/{レポジトリ名}:ref:refs/heads/{ブランチ名} -- (2)"
+                }
+            }
+        }
+    ]
+}
+  `}
+/>
+
+(1)の入力内容はほぼ固定で、ARNをコピペするだけです。
+
+重要なのは(2)の部分で、ここで「どのレポジトリやブランチからのActionsを許容するか」を指定します。
+上の例ではブランチ名までを含む完全一致ですが、`Condition`部で`StringLike`などを指定することでワイルドカード指定も可能です。
+
+<Caution
+  message="AWSリソースを使えるのはこのレポジトリのみ、というセキュリティ設定は信頼ポリシーでのみ設定ができます。
+思わぬセキュリティホールを生まないよう、セキュリティの一般的なベストプラクティスに、従い必要最小限の認可対象を選択するとよいでしょう。"
+/>
+
+AWSでの設定は以上です。ここまでくれば後の設定は簡単です。
+
+## 2. Github Actionsの設定
+
+これまでの設定で、Github ActionsはAWSへ一時的なトークンを要求可能になりました。
+このトークンにはIAMロールのポリシーが紐づいており、AWSのリソース操作の時に本トークンを併せて送ることでAWSリソースの操作が可能になります。
+
+言葉で書くとちょっと長ったらしいですが、Github Actionsワークフローでは簡単にこれを設定できます。
+以下本レポジトリで利用しているワークフロー定義ファイルをサンプルにして説明します。
+
+<CB
+  lang="yaml"
+  fileName=".github/workflows/deploy.yml"
+  content={`\
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions: # -- (1)
+      id-token: write
+      contents: read
+    steps:
+      # NextJSのビルド
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npm run build
+      # S3へのデプロイ
+      - uses: aws-actions/configure-aws-credentials@v4 # -- (2)
+        with:
+          role-to-assume: \${{ vars.AWS_ROLE_ARN }}
+          aws-region: \${{ vars.AWS_REGION }}
+      - run: aws s3 sync ./out s3://\${{ vars.BLOG_BUCKET_NAME }} --delete
+`}
+/>
+
+(1)はおまじないです（長くなりそうだったので。いつか別の記事で書くかもしれないです）。
+
+(2)が重要な部分です。このアクションはAWSにトークンを要求し、取得したトークンを環境変数にセットします。
+`AWS CLI`や`AWS SDKs`は環境変数を読み込むので、その後のアクションは特別な設定なしでAWSリソースにアクセスできます。
