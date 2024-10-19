@@ -8,7 +8,7 @@ export const ArticleListCard = (props: ArticleMeta) => {
       <div className="mb-4 flex items-center gap-3">
         <span className="text-sm text-gray-600">{props.createdAt}</span>
         <span className="text-sm text-gray-600">
-          <Tags tags={props.tags} />
+          <Tags tags={props.tags} enableLink={false} />
         </span>
       </div>
     </article>

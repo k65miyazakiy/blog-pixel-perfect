@@ -24,7 +24,7 @@ export default async function Post({ params }: { params: { slug: string[] } }) {
             createdAt={post.frontMatter.createdAt}
             updatedAt={post.frontMatter.updatedAt}
           />
-          <Tags tags={post.frontMatter.tags} />
+          <Tags tags={post.frontMatter.tags} enableLink />
         </div>
       </div>
       <hr className="mb-2" />
