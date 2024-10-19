@@ -1,6 +1,6 @@
 ---
 title: "OpenID Connectを構成してGitHub ActionsからAWS S3にアクセスする。"
-createdAt: "2024-10-14"
+createdAt: "2024-10-19"
 tags:
   - tech
   - aws
@@ -149,4 +149,4 @@ jobs:
 (2)が重要な部分です。このアクションはAWSにトークンを要求し、取得したトークンを環境変数にセットします。
 `AWS CLI`や`AWS SDKs`は環境変数を読み込むので、その後のアクションは特別な設定なしでAWSリソースにアクセスできます。
 
-<Info message="varsの値は Github Actions の 構成変数（!=環境変数、かなりややこしい）という仕組みを用いて設定しています。詳細はGithub Actionsのドキュメントを参照ください。" />
+<Info message="varsの値は Github Actions の 構成変数（かなり近しい存在なのでややこしいですが、環境変数とはまた別です）という仕組みを用いて設定しています。詳細はGithub Actionsのドキュメントを参照ください。" />
