@@ -1,8 +1,12 @@
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
+import json from "react-syntax-highlighter/dist/esm/languages/prism/json";
 import jsx from "react-syntax-highlighter/dist/esm/languages/prism/jsx";
+import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml";
 import { prism } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 SyntaxHighlighter.registerLanguage("jsx", jsx);
+SyntaxHighlighter.registerLanguage("json", json);
+SyntaxHighlighter.registerLanguage("yaml", yaml);
 
 type CodeBlockProps = {
   content: string;
