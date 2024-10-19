@@ -15,7 +15,7 @@ type CodeBlockProps = {
 };
 
 // Custom Code Block component
-export const CB = async ({ content, lang, fileName }: CodeBlockProps) => {
+export const CB = ({ content, lang, fileName }: CodeBlockProps) => {
   //   const formattedCode = synchronizedPrettier.format(content, {});
   // TODO filename
   fileName;
