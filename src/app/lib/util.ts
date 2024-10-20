@@ -112,9 +112,11 @@ export const getToC2 = (slug: string[]) => {
   const tree = processor.parse(fileContents);
   const toc: ToC2[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visit(tree, "heading", (node: any) => {
     if (node.depth === 2) {
       const textNode = node.children.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (child: any) => child.type === "text",
       );
       if (textNode) {
