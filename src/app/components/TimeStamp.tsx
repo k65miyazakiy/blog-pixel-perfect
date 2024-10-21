@@ -22,7 +22,7 @@ export const TimeStamp = ({
 
 const CreatedAt = ({ createdAt }: { createdAt: string }) => {
   return (
-    <div className="flex gap-1 text-gray-500">
+    <div className="flex items-center gap-1 text-gray-500">
       <FontAwesomeIcon icon={faClock} className="w-3" />
       <p className="text-sm">{createdAt}</p>
     </div>
@@ -31,8 +31,8 @@ const CreatedAt = ({ createdAt }: { createdAt: string }) => {
 
 const UpdatedAt = ({ updatedAt }: { updatedAt: string | undefined }) => {
   return updatedAt ? (
-    <div className="flex gap-1 text-gray-500">
-      <FontAwesomeIcon icon={faClock} className="w-[14px]" />
+    <div className="flex items-center gap-1 text-gray-500">
+      <FontAwesomeIcon icon={faClock} className="w-3" />
       <p className="text-sm">{updatedAt}</p>
     </div>
   ) : (
