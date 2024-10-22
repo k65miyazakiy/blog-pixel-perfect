@@ -20,7 +20,6 @@ const generateSearchIndex = (posts) => {
 };
 
 const getAllPosts = async () => {
-  console.log(process.cwd());
   const postsDirectory = path.join(process.cwd(), "content/posts");
   const posts = fs
     .readdirSync(postsDirectory, { withFileTypes: true, recursive: true })
