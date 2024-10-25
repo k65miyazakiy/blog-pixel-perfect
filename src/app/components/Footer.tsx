@@ -3,7 +3,7 @@ export const Footer = () => {
 
   return (
     <footer>
-      <div className="flex justify-center gap-4 border border-dotted border-gray-600 pb-4 pt-8 text-xs">
+      <div className="flex justify-center gap-4 pb-4 pt-8 text-xs">
         <div>&copy; {year} kussaka</div>
       </div>
     </footer>
