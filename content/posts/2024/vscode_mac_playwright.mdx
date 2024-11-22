@@ -1,0 +1,61 @@
+---
+title: "MacOS x VWCode x DevContainer x Playwrightで、Playwrightの拡張を利用する。"
+createdAt: "2024/11/22"
+tags:
+  - tech
+  - vscode
+  - playwright
+type: "tecklog"
+genre: "tecktips"
+---
+
+## TL;DR
+
+- MacOS上でVSCodeを使い、DevContainerを利用してPlaywrightの拡張を利用してレコーディング機能を実行しようと思うとエラーが発生する。
+- これの対応は`xquartz`のインストールで解決する。
+
+## 問題
+
+Playwrightには、VSCode上からテストの実行やレコーディングの開始などの操作を行える便利な拡張が存在します。
+便利な拡張なので活用したいところですが、MacOS上でDevContainerを利用している場合、VSCodeのPlaywrightの拡張から`Record at cursol`や`Record new`を実行しようとするとエラーが発生します。
+その時に表示されるエラーログは次の通りです。
+
+<CB
+  lang="text"
+  fileName="error"
+  content={`\
+Target page, context or browser has been closed Browser logs:
+ ╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+ ║ Looks like you launched a headed browser without having a XServer running.                     ║
+ ║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+ ║                                                                                                ║
+ ║ <3 Playwright Team                                                                             ║
+ ╚════════════════════════════════════════════════════════════════════════════════════════════════╝`}
+/>
+
+エディタ上では次のようにウィンドウ右下で確認できます。
+
+<Img
+  src="/2024//vscode_mac_playwright/error.png"
+  alt="拡張実行時のエラーログ"
+/>
+
+## 対応方法
+
+xquartzをインストールすることで解決します。
+詳しい原因は未調査ですが、おそらくDevContainerはLinuxとして動作しており、その関係でブラウザもX Windows Systemを利用しようと意図するのでXで動作するブラウザが必要なのかなと思っています。
+
+### xquartzのインストール
+
+[公式サイト](https://www.xquartz.org/)からダウンロードしてインストールします。インストール後、再ログインすることで有効になります。
+
+### Playwrightの拡張を実行する。
+
+VSCodeを再起動して、Playwrightの拡張を実行します。次のように、Xquartzのウィンドウとしてブラウザが立ち上がります。
+
+<Img
+  src="/2024/vscode_mac_playwright/result.png"
+  alt="Xquartzを通して開かれたブラウザ"
+/>
+
+<Caution message="拡張自体は起動しますが、ブラウザ操作は激重いです。素直にホストからレコーディングを開始する選択肢も考えておくとよりよいでしょう。" />

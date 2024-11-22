@@ -2,6 +2,7 @@ import { ClassAttributes, HTMLAttributes } from "react";
 import { BQ } from "./BQ";
 import { CB } from "./CB";
 import { Caution, Info } from "./Callouts";
+import { Img } from "./Image";
 import { Test } from "./Test";
 
 export type Attrs = JSX.IntrinsicAttributes &
@@ -14,6 +15,7 @@ const MDXComponents = {
   CB, // CodeBlock
   Info,
   Caution,
+  Img,
 };
 
 export default MDXComponents;
