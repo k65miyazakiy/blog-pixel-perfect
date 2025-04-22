@@ -123,7 +123,7 @@ MCPサーバー側開発者からするとやることはシンプルです。
 
 少し前に、Capabilityとはざっくり言うと「MCPサーバーがどのような操作を行えるか」と説明しましたが、もう少し詳しく説明します。
 
-サーバーで宣言可能なCapabilidyの一覧は[Capability Negotiation](https://modelcontextprotocol.io/specification/2025-03-26/basic/lifecycle)で挙げられている通りです。
+サーバーで宣言可能なCapabilityの一覧は[Capability Negotiation](https://modelcontextprotocol.io/specification/2025-03-26/basic/lifecycle)で挙げられている通りです。
 この中でも特に利用頻度が高いのはResourceとToolの2つです。
 
 ### Resource
@@ -205,7 +205,7 @@ AIモデルが次のアクションを検討する際に利用できる情報は
 先に述べた通り、MCPではクライアントとサーバー間のメッセージの仕様が定められているので、このメッセージの文字列は厳密にプロトコルに従います。
 これは[SpecificationのMessages](https://modelcontextprotocol.io/specification/2025-03-26/basic#messages)に記載の通り、すべてJSON RPC2で定義されたメッセージフォーマットを使用します。
 
-これは実際に見てみるとシンプルで直感的です。`@modelcontextprotocol/servers`で提供される`filesytems`サーバーを利用した場合の通信メッセージの例を見てみましょう。
+これは実際に見てみるとシンプルで直感的です。`@modelcontextprotocol/servers`で提供される`filesystem`サーバーを利用した場合の通信メッセージの例を見てみましょう。
 
 はじめに、MCPクライアントからサーバーへのメッセージをキャプチャしてみます。次のようなメッセージを確認できます。
 
