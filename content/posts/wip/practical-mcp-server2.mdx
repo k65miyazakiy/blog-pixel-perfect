@@ -1,0 +1,284 @@
+---
+title: "Model Context Protocol(MCP)のちょっとした深掘り。カスタムMCPサーバーの構築に向けて：後編"
+created: "2025-04-23"
+tags:
+  - tech
+  - ai
+  - mcp
+type: "techtips"
+---
+
+## はじめに
+
+本稿では、Model Context Protocol(MCP)の概要と、MCPを利用したカスタムサーバーの構築に際して役立つような、ちょっと深掘りした内容を説明します。
+
+前編ではMCPの概要や、知っておくと役に立つMCPの仕様について説明しました。
+後編では、実際のMCPサーバーを実装した際のソースコードの解説や、開発時に役立つ情報を紹介します。
+
+## MCPサーバーの実装の確認
+
+以降では、実際にMCPサーバーを実装した結果のソースコードを確認しつつ、説明を行います。
+
+## 概要
+
+ここで紹介するMCPサーバーの実装例はすべて[mcp-server-spanner](https://github.com/k65miyazakiy/mcp-server-spanner)で公開しています。
+Google CloudがSaaSとして提供しているSpannerというデータベースサービスへのアクセスを提供するMCPサーバーです。
+
+実装言語としてはTypescriptを選択しています。SDKが提供されている言語であればどの言語を選択してもよいと思います。
+MCPの実装として提供されているSDKの一覧は[公式ドキュメントのSDKs](https://modelcontextprotocol.io/sdk/java/mcp-overview)を参照してください。
+
+## MCPサーバーの設計
+
+本MCPサーバーは、5つのToolを提供しています。次の通りです。
+
+1. read_query
+2. list_tables
+3. describe_table
+4. execute_ddl
+5. execute_write
+
+**Capability設計、つまりどのようなTool（やその他）を提供するかどうかは利用用途やAIモデル、またサーバーが接続するコンテキストが提供しているアクセス方法によって異なる**でしょう。
+参考までに本サーバーの設計意図を説明すると、本サーバーは**今後利用しそうな指示に対して必要となる概ねの機能を提供する**ことを目的にツールの実装・提供を行いました。
+
+具体的な想定用途は、例えば
+
+- テーブルにすでに挿入されているデータを参考にテストデータを生成・挿入する（read_query, describe_table, execute_writeなどが想定ツール）
+- テーブルのスキーマを確認し、仕様との乖離を確認する（list_tables, describe_tableなどが想定ツール）
+- 任意のテーブルを作成する / 不要なテーブルを削除する（execute_ddlなどが想定ツール）
+
+などを想定して、これらに必要（そう）な操作をToolとして実装するアプローチを採用しています。
+
+SQLは強い標準が存在するため、データベースクライアントとしてのMCPサーバーを提供する場合のTool設計は似たようなものになる傾向が強いと思いますが、
+**よりドメインに特化するような特別なMCPサーバーを提供する場合、どのようなToolを提供するかは重要な設計観点になる**でしょう。
+
+## 依存パッケージの確認
+
+はじめに、[主要な依存パッケージ](https://github.com/k65miyazakiy/mcp-server-spanner/blob/main/package.json#L22-L24)を説明すると、次の通りです。
+
+<CB
+  lang="json"
+  fileName="package.json"
+  content={`\
+{
+    "@google-cloud/spanner": "^7.19.1",     -- 1
+    "@modelcontextprotocol/sdk": "^1.9.0",  -- 2
+    "yargs": "^17.7.2"                      -- 3
+  }
+}`}
+/>
+
+1はGoogle CloudのSpannerにアクセスするためのSDKです。本MCPサーバーはSpannerクライアントとしての役割を持つので、当然の依存ですね。
+
+次に飛んで3ですが、これはコマンドライン引数をパースするためのライブラリです。これは、実行時に必要なパラメータをコマンドライン引数として渡すことができるように利用しています。
+（環境変数経由で動作させることももちろん可能だと思いますが、動作が不安定なところがあったので消極的な理由でコマンドライン引数を利用しています...）
+
+最後に、2はMCPのSDKです。これを利用することでMCPの細かい仕様を把握することなく、MCPサーバーを実装することができます。
+
+## Spannerクライアントの確認
+
+次は軽く[Spannerのラッパークライアント（spanner-queries.ts）](https://github.com/k65miyazakiy/mcp-server-spanner/blob/main/src/spanner-queries.ts)の実装を確認します。
+
+本ソースでは上記で紹介した5つのToolそれぞれに対応する関数を実装しています。
+やることは単純で、おおむねAPIモデルから送信されたSQLを実行するのみです。
+SQLを実行する関数は引数がそれぞれsqlというstringのパラメータなのでわかりやすいですね。
+
+重要な点は、**引数で受け取ったSQLをそのまま実行するという設計は、AIモデルが正しくSQLを生成できることを前提としている、という点**です。
+前編で「**MCPサーバーを利用して何が出来るか、はMCPサーバーの実装のみに依存するのではなく、AIモデルの実装や性能**にも依存する」と記載しましたが、この前提はツールの設計にこのような形で反映されます。
+
+もし、AIモデルが入力値を正しく生成できるかどうか不安な場合は、より入口を絞った形式でCapabilityを提供することも可能です。
+
+例えば、クエリがDSLで実装されている場合、AIモデルがそれを正しく判断するのは難しいでしょう。
+このような場合、重要なパラメータのみを受け取りクエリ自体はサーバー側で構築するような形にすることでサーバーを正しく利用できる確率が上がることが期待できます。
+
+<Info message="その他、APIやDSLの仕様書をコンテキストで渡すというパワー系の解決策も考えられます。" />
+
+本クライアントでは、list_tables（引数なし）や、describe_table（引数にテーブル名のみを指定可能）で、より入口を絞った形式でのエンドポイントを提供しています。
+
+## ネゴシエーションおよびオペレーションハンドラの定義
+
+最後に[エントリーポイント（index.ts）](https://github.com/k65miyazakiy/mcp-server-spanner/blob/main/src/index.ts)となる処理を確認します。
+
+改めて前編での内容を振り返ると、クライアントからMCPサーバーにはざっくり分けて2種類のリクエストが送信されます。
+
+1. 初期化フェーズでの接続確立のためのハンドシェイクおよびVersionとCapabilityネゴシエーションリクエスト
+2. オペレーションフェーズでのMCPクライアントからのリクエスト
+
+これらをSDKで用意された方法でそれぞれ実装します。重要な部分を抜粋します。
+
+<CB
+  lang="typescript"
+  fileName="index.ts"
+  content={`\
+// 1. MCPサーバーの初期化
+const server = new Server(
+  {
+    name: "mcp-server-spanner",
+    version: "1.0.0",
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
+
+// 2-1. Capability（Tool）詳細の実装
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools: [
+      {
+        name: "read_query",
+        description: "Execute a SELECT query on the Spanner database",
+        inputSchema: {
+          type: "object",
+          properties: {
+            sql: { type: "string", description: "SELECT SQL query to execute" },
+          },
+          requires: ["sql"],
+        },
+      },
+      // ...（中略）...
+    ],
+  };
+});
+
+// 2-2. Toolの実装
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  switch (request.params.name) {
+    case "read_query":
+      const sql = request.params.arguments?.sql;
+      // ...（中略）...
+      return {
+        content: rows.map((row) => ({
+          text: JSON.stringify(row.toJSON()),
+          type: "text",
+        })),
+      };
+    // ...（中略）...
+    default:
+      throw new Error(\`Unknown tool name: \${request.params.name}\`);
+  }
+});
+`}
+/>
+
+コードコメントの番号と、前述の番号が対応しています。
+
+### 1. MCPサーバーの初期化：ネゴシエーションの定義
+
+まずは項番1で、SDK上でサーバーインスタンスを生成しています。
+
+コンストラクタでバージョンおよび`capabiliteis`を渡していることが確認できます。
+これが初期化フェーズのネゴシエーションに利用される情報です。
+
+ちょっと**誤解しやすいところですが、ここでの`capabilities`は「本サーバーはツールをサポートしています」という情報をクライアントに伝えるのみで、ツールの詳細は記載しませんし、できません**。
+**実際のツールの一覧や詳細の定義は`setRequestHandler`で行う**必要があります。
+
+### 2. オペレーションフェーズのリクエストハンドラの定義
+
+次はオペレーションフェーズのリクエストハンドラを定義しています。項番2の部分です。
+
+**CapabilityでToolを宣言しているので、「2-1 ツールの一覧を取得するリクエストへのハンドラ」と「2-2 ツールを実行するリクエストへのハンドラ」の2つを実装**する必要があります。
+これらのハンドラはともにserverインスタンスのメソッド（`server.setRequestHandler`）で登録します。
+
+2-1ではツールの一覧を取得するリクエストハンドラを定義しています。これはJSON-RPCの`method: tools/list`というリクエストで送られてきます。
+SDK的には第一引数で`ListToolsRequestSchema`を指定して、ツールの名前や説明、パラメータの定義を正しい形式で返してやればOKです。
+
+2-2では実際にツールの実行を要求された時のハンドラを定義します。これはJSON-RPCの`method: tools/call`というリクエストで送られてきます。
+SDK的には第一引数が`CallToolRequestSchema`に変わります。
+[ツール実行リクエストスキーマ](https://modelcontextprotocol.io/specification/2025-03-26/server/tools#calling-tools)の通り、どのToolを実行するかが文字列で渡ってくるので、
+その文字列を解釈してswitch文で定義済みのメソッドに渡してやります。
+
+### その他のCapabilityを定義する場合
+
+上の例ではToolのみに対応していますが、この他のCapability（ResourceやPrompt）を追加する場合は以下の3つをセットで実装します。
+
+1. サーバーの初期化時に該当のCapabilityを追加で定義する
+2. 該当のCapabilityの一覧を取得するリクエストに対するハンドラを定義する
+3. 該当のCapabilityを取得/実行するリクエストに対するハンドラを定義する
+
+## トランスポート方法とコマンドラインハンドラの定義
+
+引き続き[エントリーポイント（index.ts）](https://github.com/k65miyazakiy/mcp-server-spanner/blob/main/src/index.ts)を確認します。
+ハンドラの実装は終えたので、あとはトランスポート方法を定義してサーバーを起動するだけです。
+
+<CB
+  lang="typescript"
+  fileName="index2.ts"
+  content={`\
+async function runServer() {
+  // コマンドライン引数の解析
+  const argv = yargs(hideBin(process.argv))
+    .option("project-id", {
+      type: "string",
+      describe: "Google Cloud Project ID for Spanner",
+    })
+    // ...(中略)...
+    .help()
+    .alias("h", "help")
+    .parseSync();
+
+  // ...(中略)...
+
+  // 標準入出力を使用するトランスポート層を作成
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+}
+
+// サーバーの起動
+runServer().catch(console.error);
+`} />
+
+本サーバーは`stdio`をトランスポートとして利用するので、`StdioServerTransport`を利用しています。
+それ以前の初期化処理は、コマンドラインからSpannerのデータベース接続情報を取得するためのものです。
+
+ソースコードの実例説明は以上です。
+
+## 開発時のデバッグ情報やTIPS
+
+前編で記述した通り、MCPはざっくり分けるとサーバー - クライアント - AIモデルが協働して動作するプロトコルです。
+メインとなる主体が3つあり、どこで問題が発生しているのか特定が難しい場合があるので、ある部分を切り出したり特定の部分の通信を確認できると便利です。
+
+ここでは問題の切り分けや動作確認に便利なツールやTIPSなどを雑多に紹介します。まあほぼ公式の[Debugging](https://modelcontextprotocol.io/docs/tools/debugging)のところの紹介です。
+
+<Info message="現在(2025/4/23)公式には本ガイドはmacOS用と示されていますが、Windowsでも問題なく利用できます" />
+
+### MCPサーバーとホスト/クライアント間のデバッグ
+
+まずはサーバーとホスト/クライアント間のデバッグに利用できるツールを紹介します。サーバー開発者としてはよく利用することになると思います。
+
+#### MCP Inspector
+
+MCPサーバーが正しく動作しているかどうかを単体で確認したい場合は[MCP Inspector](https://github.com/modelcontextprotocol/inspector)が便利です。
+MCP Inspector自体はMCPクライアントとして動作して、MCPサーバーが仕様に沿って正しく実装されているかを確かめるのに役立つ操作を提供しています。
+具体的にはMCPサーバーが提供しているCapabilityの確認や、ツールの実行やリソースの取得などをブラウザ上で簡単に行うことができます。
+
+#### MCPログ（Claude Desktop）
+
+Claude DesktopではMCPサーバーとの通信はログファイルに記録されるので、任意のビューワーで実際の通信を確認できます。
+多分他のMCPホストアプリケーションでも同様の機能はあると思いますが、めんｄ・・・諸般の事情で確認できてません。
+
+参考までに、MCPログの例をちょっとだけ載せておきます。
+
+<CB
+  lang="typescript"
+  fileName="index2.ts"
+  content={`\
+2025-04-23T10:15:01.033Z [info] [spanner] Message from client: {"method":"prompts/list","params":{},"jsonrpc":"2.0","id":26}
+2025-04-23T10:15:01.033Z [info] [filesystem] Message from client: {"method":"prompts/list","params":{},"jsonrpc":"2.0","id":22}
+2025-04-23T10:15:01.033Z [info] [blender] Message from client: {"method":"prompts/list","params":{},"jsonrpc":"2.0","id":8}
+2025-04-23T10:15:01.033Z [info] [spanner] Message from server: {"jsonrpc":"2.0","id":26,"error":{"code":-32601,"message":"Method not found"}}
+2025-04-23T10:15:01.034Z [info] [filesystem] Message from server: {"jsonrpc":"2.0","id":22,"error":{"code":-32601,"message":"Method not found"}}
+`} />
+
+`Method not found`が結構確認できますね。恐らくCapabilityで宣言しているけど、中身を実装していないサーバーがあるとこのようになると思います。
+
+### MCPホスト/クライアントとAIモデル間の通信の確認
+
+次はMCPホスト/クライアントとAIモデル間の通信の確認に役立つツールを紹介します。
+サーバー開発者としてはあまり利用しないかもしれませんが、MCP全体の動きを認識する際に便利です。
+
+#### Claude Desktop Developer Tool
+
+Claude DesktopはChromiumを利用しているので、[Chrome Developer Toolでモデル - ホスト間の通信を確認することができます](https://modelcontextprotocol.io/docs/tools/debugging#using-chrome-devtools)。
+ドキュメントにはmacのコマンド`Command-Option-Shift-i`のみの記載ですが、Windowsの場合でも`Ctrl + Shift + Alt + i`で開くことができます。
