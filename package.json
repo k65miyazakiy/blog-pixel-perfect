@@ -10,7 +10,9 @@
     "serve:rebuild": "next build && serve out",
     "lint": "next lint",
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.tsx'",
-    "clean": "rm -rf out .next"
+    "clean": "rm -rf out .next",
+    "check-update": "npx npm-check-updates",
+    "do-update": "npx npm-check-updates -u"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
