@@ -26,6 +26,7 @@ export type ArticleMeta = {
   createdAt: string;
   updatedAt?: string;
   tags?: string[];
+  slug?: string;
 };
 
 // H2タグのToC

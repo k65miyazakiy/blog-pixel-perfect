@@ -1,60 +1,70 @@
 @import "tailwindcss";
 
+/* ベースフォント・テキスト設定 */
+body {
+  @apply text-gray-800 antialiased;
+}
+
+/* グラデーションアクセント（ヒーローやセクション区切りなどで利用可能） */
+.gradient-accent {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+/* リンクとボタンのホバー効果 */
+.hover-effect {
+  @apply transition-all duration-300;
+}
+
+/* コードハイライトのスタイル調整 */
+pre {
+  @apply overflow-auto rounded-md;
+}
+
 /* 記事中の基本タグなどのスタイリング */
 #postContent {
   /* 本文 */
   > p {
-    margin-bottom: 0.75rem;
-    font-size: 0.8rem;
-    color: #222;
-    line-height: 1.5rem;
+    @apply mb-4 text-sm leading-relaxed text-gray-700;
   }
 
   /* ヘッダー類 */
-  > h1,
-  h2 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    font-weight: bold;
-    color: #333;
+  > h1 {
+    @apply mt-8 mb-4 text-3xl font-bold text-gray-900;
   }
 
-  > h3,
-  h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-    font-weight: bold;
-    color: #333;
+  > h2 {
+    @apply mt-6 mb-4 border-b border-gray-200 pb-2 text-2xl font-bold text-gray-900;
+  }
+
+  > h3 {
+    @apply mt-5 mb-3 text-xl font-semibold text-gray-900;
+  }
+
+  > h4 {
+    @apply mt-4 mb-2 text-lg font-medium text-gray-900;
   }
 
   /* リストのスタイリング（ネスト対応） */
   > ul,
   ol {
-    font-size: 0.85rem;
-    color: #222;
-    margin-left: 1.5rem;
-    margin-bottom: 1rem;
+    @apply mb-4 ml-6 text-sm text-gray-700;
 
     a {
-      color: #0050a5;
+      @apply text-indigo-600 transition-colors duration-300 hover:text-indigo-800;
     }
 
     > li {
-      line-height: 1.5rem;
+      @apply mb-1 leading-relaxed;
 
       > ul,
       ol {
-        margin-left: 1rem;
+        @apply mt-1 mb-1 ml-5;
         > li {
-          line-height: 1.5rem;
+          @apply leading-relaxed;
 
           > ul,
           ol {
-            margin-left: 1rem;
+            @apply ml-5;
           }
         }
       }
@@ -64,9 +74,9 @@
   > ul > li {
     list-style-type: disc;
     > ul {
-      list-style-type: disc;
+      list-style-type: circle;
       > li > ul {
-        list-style-type: disc;
+        list-style-type: square;
       }
     }
   }
@@ -74,31 +84,64 @@
   > ol > li {
     list-style-type: decimal;
     > ol {
-      list-style-type: decimal;
+      list-style-type: lower-alpha;
       > li > ol {
-        list-style-type: decimal;
+        list-style-type: lower-roman;
       }
     }
   }
 
+  /* ブロッククォート */
+  > blockquote {
+    @apply my-4 border-l-4 border-indigo-300 pl-4 text-gray-600 italic;
+  }
+
   /* 水平線 */
   > hr {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+    @apply my-6 border-t border-gray-200;
   }
 
   /* リンク */
   > p > a {
-    color: #0050a5;
-    text-decoration: none;
-    transition: 0.2s;
+    @apply text-indigo-600 transition-colors duration-300 hover:text-indigo-800;
   }
 
   /* インラインコード */
   > p > code {
-    font-size: 0.9rem;
-    background-color: #f5f5f5;
-    padding: 0.1rem 0.3rem;
-    border-radius: 0.2rem;
+    @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-indigo-700;
+  }
+
+  /* コードブロック */
+  > pre {
+    @apply mb-4 overflow-auto rounded-md p-4 text-gray-100;
+    > code {
+      @apply font-mono text-sm leading-relaxed;
+    }
+  }
+
+  /* テーブル */
+  > table {
+    @apply mb-4 w-full border-collapse;
+    > thead {
+      @apply bg-gray-100;
+      > tr {
+        > th {
+          @apply border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700;
+        }
+      }
+    }
+    > tbody {
+      > tr {
+        @apply hover:bg-gray-50;
+        > td {
+          @apply border border-gray-300 px-4 py-2 text-sm text-gray-700;
+        }
+      }
+    }
+  }
+
+  /* 画像 */
+  > p > img {
+    @apply mx-auto my-4 rounded-md shadow-sm;
   }
 }

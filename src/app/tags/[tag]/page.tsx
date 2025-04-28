@@ -1,13 +1,12 @@
 import { ArticleListCard } from "@/app/components/ArticleListCard";
 import { getPostsMeta } from "@/app/lib/util";
-import Link from "next/link";
 
 type Tag = {
   tag: string;
-}
+};
 
 // 各タグに対して記事一覧を表示する
-export default async function Post({ params }: { params:Promise<Tag> }) {
+export default async function Post({ params }: { params: Promise<Tag> }) {
   const { tag } = await params;
   const metas = getPostsMeta();
   const posts = metas.filter((meta) => {
@@ -15,25 +14,25 @@ export default async function Post({ params }: { params:Promise<Tag> }) {
   });
 
   return (
-    <>
-      <div className="mt-4 flex items-end">
-        <h1 className="pl-4 text-lg">
-          Tag :<span className="font-mono"> {tag}</span>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mt-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900">
+          Tag: <span className="font-mono text-indigo-600">{tag}</span>{" "}
+          <span className="text-sm text-gray-500">（{posts.length}）</span>
         </h1>
-        <div className="pb-[5px] text-xs">（{posts.length}）</div>
       </div>
       <div>
-        <ul className="mt-4 flex flex-col items-center gap-4">
+        <ul className="my-8 space-y-6">
           {posts.map((post) => (
-            <li key={post.slug}>
-              <Link href={`/posts${post.slug}`}>
-                <ArticleListCard {...post.frontMatter} />
-              </Link>
+            <li key={post.slug} className="flex justify-center">
+              <div className="w-full max-w-2xl">
+                <ArticleListCard {...post.frontMatter} slug={post.slug} />
+              </div>
             </li>
           ))}
         </ul>
       </div>
-    </>
+    </div>
   );
 }
 
