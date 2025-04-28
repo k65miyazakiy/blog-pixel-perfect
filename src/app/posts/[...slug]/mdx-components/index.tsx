@@ -1,4 +1,4 @@
-import { ClassAttributes, HTMLAttributes } from "react";
+import { ClassAttributes, HTMLAttributes, JSX } from "react";
 import { BQ } from "./BQ";
 import { CB } from "./CB";
 import { Caution, Info } from "./Callouts";

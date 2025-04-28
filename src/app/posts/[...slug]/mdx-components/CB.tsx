@@ -17,10 +17,9 @@ type CodeBlockProps = {
 };
 
 // Custom Code Block component
+// eslint-disable-next-line
 export const CB = ({ content, lang, fileName }: CodeBlockProps) => {
-  //   const formattedCode = synchronizedPrettier.format(content, {});
-  // TODO filename
-  fileName;
+  // TODO fileNameに対応する
   return (
     <pre>
       <code className="text-sm">
