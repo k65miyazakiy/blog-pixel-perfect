@@ -2,8 +2,8 @@ name: Build Blog Without Deploy
 
 on:
   push:
-    branches:
-      - 'fixbuilderr'
+    branches-ignore:
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
