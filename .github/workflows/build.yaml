@@ -3,7 +3,7 @@ name: Build Blog Without Deploy
 on:
   push:
     branches:
-      - '!main'
+      - 'fixbuilderr'
 jobs:
   deploy:
     runs-on: ubuntu-latest
