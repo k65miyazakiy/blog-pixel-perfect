@@ -12,8 +12,8 @@ type Slug = {
   slug: string[];
 };
 
-export default async function Post({ params }: { params: { slug: string[] } }) {
-  const { slug } = params;
+export default async function Post({ params }: { params: Promise<Slug> }) {
+  const { slug } = await params;
   const post = await getPost(slug);
   const toc = getToC2(slug);
 
