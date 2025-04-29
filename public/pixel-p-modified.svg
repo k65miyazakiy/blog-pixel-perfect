@@ -1,0 +1,10 @@
+<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景を透明に -->
+  <rect width="16" height="16" fill="transparent"/>
+  
+  <!-- Pの色を濃い青色に変更 -->
+  <rect x="2" y="2" width="2" height="12" fill="#0066cc"/>
+  <rect x="4" y="2" width="8" height="2" fill="#0066cc"/>
+  <rect x="4" y="7" width="8" height="2" fill="#0066cc"/>
+  <rect x="10" y="4" width="2" height="3" fill="#0066cc"/>
+</svg>
