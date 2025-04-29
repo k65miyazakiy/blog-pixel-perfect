@@ -12,7 +12,7 @@ export default function About() {
                 alt="プロフィール画像"
                 width={128}
                 height={128}
-                className="overflow-clipd h-full w-full rounded-full object-cover"
+                className="h-full w-full overflow-clip rounded-full object-cover"
               />
             </div>
           </div>
