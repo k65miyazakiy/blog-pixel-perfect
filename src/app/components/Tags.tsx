@@ -1,4 +1,5 @@
-import Link from "next/link";
+"use client";
+import { useRouter } from "next/navigation";
 
 export const Tags = ({
   tags,
@@ -7,17 +8,29 @@ export const Tags = ({
   tags?: string[];
   enableLink?: boolean;
 }) => {
-  const enableLinkStyle = enableLink
-    ? "hover:border-sky-700 hover:bg-sky-50 hover:text-sky-700 transition-colors duration-300 ease-in"
-    : "";
+  const router = useRouter();
   return tags ? (
-    <ul className="flex gap-2">
+    <ul className="flex flex-wrap gap-2">
       {tags.map((tag) => (
         <li
           key={tag}
-          className={`rounded-2xl border border-gray-400 px-2 py-0.5 font-mono text-xs text-gray-500 duration-300 ease-in before:pr-1 before:content-['#'] ${enableLinkStyle}`}
+          className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-medium ${enableLink ? "bg-indigo-100 text-indigo-700 transition-colors duration-300 hover:bg-indigo-200" : "bg-gray-100 text-gray-700"}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/tags/${tag}`);
+          }}
         >
-          {enableLink ? <Link href={`/tags/${tag}`}>{tag}</Link> : <>{tag}</>}
+          {enableLink ? (
+            <div className="flex cursor-pointer items-center">
+              <span className="mr-1 text-indigo-500">#</span>
+              {tag}
+            </div>
+          ) : (
+            <span>
+              <span className="mr-1 text-gray-500">#</span>
+              {tag}
+            </span>
+          )}
         </li>
       ))}
     </ul>

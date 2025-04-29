@@ -1,6 +1,7 @@
 import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import "./globals.css";
+import "./lib/fontawesome";
 
 import { Noto_Sans } from "next/font/google";
 const NotoSans = Noto_Sans({ weight: "400", subsets: ["latin"] });
