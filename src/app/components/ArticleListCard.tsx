@@ -9,7 +9,8 @@ export const ArticleListCard = (props: ArticleMeta) => {
     <article
       className={`w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md ${props.slug && "cursor-pointer"}`}
       onClick={() => {
-        props.slug && router.push(`/posts/${props.slug}`);
+        if (props.slug) router.push(`/posts/${props.slug}`);
+        return;
       }}
     >
       <h1 className="mb-3 text-xl font-bold text-gray-900 transition-colors duration-300 hover:text-indigo-600">
