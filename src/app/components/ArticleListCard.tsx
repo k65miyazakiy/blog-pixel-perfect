@@ -9,7 +9,7 @@ export const ArticleListCard = (props: ArticleMeta) => {
     <article
       className={`w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-md ${props.slug && "cursor-pointer"}`}
       onClick={() => {
-        if (props.slug) router.push(`/posts/${props.slug}`);
+        if (props.slug) router.push(`/posts/${props.slug.replace(/^\//, "")}`);
         return;
       }}
     >
