@@ -1,0 +1,114 @@
+---
+title: "令和の Kubernetes ザ・ハードウェイ その1"
+createdAt: "2025-05-18"
+tags:
+  - tech
+  - kubernetes
+type: "techtips"
+---
+
+現在では、Kubernetesクラスタを手動で構築することはほぼないと思います。
+しかし、学習用途のため、Kubernetesクラスタを手動で構築してみたいなと思ったことはありませんか？
+僕はあったのでKubernetesクラスタを`kubeadm`を使わずに手動で構築してみました。
+
+本稿では、主にその手順や、あとはその途中で学んだKubernetesクラスタを理解するうえで重要なポイントを解説していきます。
+
+なお、このようなトライには[Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)という有名な元ネタがあり、主にそこから着想を得ています。
+しかし、今回は`kubernetes-the-hard-way`は特に参考にしておらず、AIと公式ドキュメントを活用して進めています(結局AIがk8stHWを参考にしている部分は大いにあると思いますが...)。
+
+本チャレンジではKubernetesの内部構造の理解の促進を目的としており、完全なクラスタ環境の構築は目標とはしていないです。
+条件および構築のゴールは次の通りです。
+
+- シングルノードの極めて簡単なKubernetesクラスタを構築する
+- `kubeadm`コマンドは利用しない
+- `nginx`のポッドを立ててWelcomeページの表示の確認を目標とする
+
+本稿では次のような内容の理解の促進を目指します。
+
+- Kubernetesクラスタの主要なコンポーネントを理解する
+- 証明書および鍵の役割や見方を理解する
+- ユニットファイルやkubeconfigなどの設定ファイルの役割を理解する
+
+<Caution message="本試行は学習用途の目的が多分なので、間違いを含んでいる可能性が多分にあります。なるべく正確を期すよう公式ドキュメントなどから裏付けを行おうとは思っていますが、何かあれば遠慮なくISSUEなどで知らせてください。" />
+
+### サンプルコードについて
+
+本稿の検証で利用したサンプルコードは全て[Github](https://github.com/k65miyazakiy/blog-snippets/tree/main/2025/reiwa-k8s-hard-way)に格納しています。
+構築作業自体は`debian`系のVMであれば大体動くと思います。
+一応、`terraform`で利用する`tf`ファイルを用意していますが、任意のクラウドプロパイダで任意のVMを立ててもらっても十分です（`apt`は使えた方がよいです）。
+
+## 構築手順概要
+
+はじめに構築手順の概要を示します。
+主な手順は次の通りです。
+
+1. カーネルパラメータなどの調整
+2. コンテナランタイムcontainerdのインストール
+3. kubelet, kubectlのインストール
+4. PKIの構築および鍵ファイル、証明書の発行
+5. kubeconfigファイルの作成
+6. 各サービスのインストール・起動
+7. 動作確認
+
+以降、それぞれ解説していきますが、長くなりそうなので本投稿では1~3までを掲載します。
+
+## カーネルパラメータなどの調整
+
+はじめに[コンテナランタイムの事前準備](https://kubernetes.io/docs/setup/production-environment/container-runtimes/#install-and-configure-prerequisites)を行います。
+必須の手順として`net.ipv4.ip_forward = 1`を設定すること、とあるのでこれをします。
+
+これが[2025/reiwa-k8s-hard-way/scripts/01-setup-container-runtime.sh](https://github.com/k65miyazakiy/blog-snippets/blob/main/2025/reiwa-k8s-hard-way/scripts/01-setup-container-runtime.sh)に記載の内容です。
+
+## containerdのインストール
+
+Kubernetesはコンテナオーケストレーションツールとよく表現される通り、コンテナを一つのプリミティブな単位として扱います。
+コンテナを動作させるにはコンテナランタイムが必要で、このコンテナランタイムは[Kubernetes CRI（Container Runtime Interface）](https://github.com/kubernetes/cri-api/blob/master/README.md)に準拠している限り、どのようなものでも利用できます。
+
+一般的に利用可能なコンテナランタイムは[ドキュメントに記載](https://kubernetes.io/docs/setup/production-environment/container-runtimes/)の通りで、次のようなものがあります。
+
+- containerd
+- CRI-O
+- Docker Engine
+- Mirantis Container Runtime
+
+今回は`containerd`を利用します。一番上に書いてあったからです。
+
+### aptレポジトリを用いたcontainerdのインストール
+
+`containerd`の取得方法は[公式](https://github.com/containerd/containerd/blob/main/docs/getting-started.md#option-2-from-apt-get-or-dnf)に記載してあります。
+今回は`debian`なので、`apt`を利用する方法を選択します。この方法では`Docker`用の`apt`レポジトリを登録し、その中で`containerd`のみをインストールする、という方法になります。
+
+`Docker`自体が内部的なコンテナランタイムとして`containerd`および`runc`を利用しているため、そのうちの`containerd.io`パッケージのみをインストールすれば良い、ということですね。
+`containerd.io`パッケージは`runc`も含んでいます。
+
+> The containerd.io package contains runc too, but does not contain CNI plugins.
+
+後半部分に寄ると、CNIプラグインは含まれていないことがわかります。これはkubernetesのネットワーク構築に必要な依存なので（恐らく）、これもインストールします。
+
+### CNIプラグインのインストール
+
+CNIプラグインのインストール手順も[ちょっと上](https://github.com/containerd/containerd/blob/main/docs/getting-started.md#step-3-installing-cni-plugins)に記載があります。
+`wget`で圧縮ファイルを取得後、展開して所定の位置に置くだけでOKです。
+
+### CRIサポートの有効化
+
+`containerd`をDockerレポジトリからインストールした場合、設定が一部不適なようになっているようです。
+これは公式では[Note](https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd-systemd)にも注記があります。
+
+> You need CRI support enabled to use containerd with Kubernetes. Make sure that cri is not included in thedisabled_plugins list within /etc/containerd/config.toml
+
+`containerd`の設定ファイルに`disabled_plugins`という項目があり、これに`cri`が含まれているとダメだと言っています。apt経由でインストールすると、実際こうなっているのでこれを修正します。
+
+ここまでの手順が[2025/reiwa-k8s-hard-way/scripts/02-install-containerd.sh](https://github.com/k65miyazakiy/blog-snippets/blob/main/2025/reiwa-k8s-hard-way/scripts/02-install-containerd.sh)に記載した内容です。
+
+## kubelet, kubectlのインストール
+
+今回はシングルノードのKubernetesクラスタを構築するので、コントロールプレーンに`kubelet`をインストールします。
+`kubectl`は最悪直接APIサーバーにcurlでアクセスが可能ですが、まあ今回は特別使わない理由もないので併せてインストールします。
+
+だいたい`kubeadm`も含めて3つをインストールすると思いますが、今回はこれだけは使いません。
+
+ここまでの手順が[2025/reiwa-k8s-hard-way/scripts/03-install-kube-tools.sh](https://github.com/k65miyazakiy/blog-snippets/blob/main/2025/reiwa-k8s-hard-way/scripts/03-install-kube-tools.sh)に記載した内容です。
+
+本稿はここまでです。次回はPKIの構築および鍵ファイル、証明書の発行を行います。
+恐らく一番長くなりそうな部分ですね。
