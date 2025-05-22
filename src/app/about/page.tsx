@@ -1,18 +1,21 @@
-import { DynamicBorder } from "../components/DynamicBorder";
 import Link from "next/link";
+import { DynamicBorder } from "../components/DynamicBorder";
 
 export default function About() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-solarized-dark min-h-screen">
+    <div className="bg-solarized-dark mx-auto min-h-screen max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* Terminal Header */}
       <div className="py-8 font-mono">
-        <div className="border border-solarized-darker bg-solarized-dark p-6" data-dynamic-border-container>
+        <div
+          className="border-solarized-darker bg-solarized-dark border p-6"
+          data-dynamic-border-container
+        >
           <DynamicBorder label="File: README.md" type="top" />
           <div className="px-4 py-4">
-            <h1 className="text-2xl font-medium text-solarized-blue mb-2">
+            <h1 className="text-solarized-blue mb-2 text-2xl font-medium">
               $ cat README.md
             </h1>
-            <p className="text-solarized-text text-sm mb-1">
+            <p className="text-solarized-text mb-1 text-sm">
               このブログとその管理者について
             </p>
             <p className="text-solarized-muted text-xs">
@@ -23,19 +26,22 @@ export default function About() {
         </div>
       </div>
 
-      <div className="my-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="my-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Profile Section */}
-        <div className="bg-solarized-darker border border-solarized-muted p-6 font-mono" data-dynamic-border-container>
+        <div
+          className="bg-solarized-darker border-solarized-muted border p-6 font-mono"
+          data-dynamic-border-container
+        >
           <DynamicBorder label="Profile" type="top" />
           <div className="px-4 py-4">
-            <div className="mb-4 text-solarized-green text-sm">
+            <div className="text-solarized-green mb-4 text-sm">
               <span className="text-solarized-muted">$&nbsp;</span>
               <span>whoami</span>
             </div>
-            
-            <div className="flex flex-col md:flex-row items-center gap-6 mb-6">
+
+            <div className="mb-6 flex flex-col items-center gap-6 md:flex-row">
               <div className="relative h-24 w-24 flex-shrink-0">
-                <div className="border border-solarized-muted rounded p-1">
+                <div className="border-solarized-muted rounded border p-1">
                   <img
                     src="/avator_rm.png"
                     alt="プロフィール画像"
@@ -46,17 +52,19 @@ export default function About() {
                 </div>
               </div>
               <div className="text-center md:text-left">
-                <h2 className="text-lg font-medium text-solarized-blue mb-2">
+                <h2 className="text-solarized-blue mb-2 text-lg font-medium">
                   kussaka
                 </h2>
-                <p className="text-solarized-text text-sm mb-2">ソフトウェアエンジニア</p>
+                <p className="text-solarized-text mb-2 text-sm">
+                  ソフトウェアエンジニア
+                </p>
                 <p className="text-solarized-muted text-xs leading-relaxed">
                   バックエンド、フロントエンド、クラウドインフラなどWebアプリの実現に必要なもろもろの業務に携わってきました。
                 </p>
               </div>
             </div>
 
-            <div className="mb-4 text-solarized-green text-sm">
+            <div className="text-solarized-green mb-4 text-sm">
               <span className="text-solarized-muted">$&nbsp;</span>
               <span>git remote -v</span>
             </div>
@@ -89,28 +97,33 @@ export default function About() {
         </div>
 
         {/* Project Info Section */}
-        <div className="bg-solarized-darker border border-solarized-muted p-6 font-mono" data-dynamic-border-container>
+        <div
+          className="bg-solarized-darker border-solarized-muted border p-6 font-mono"
+          data-dynamic-border-container
+        >
           <DynamicBorder label="Project Info" type="top" />
           <div className="px-4 py-4">
-            <div className="mb-4 text-solarized-green text-sm">
+            <div className="text-solarized-green mb-4 text-sm">
               <span className="text-solarized-muted">$&nbsp;</span>
-              <span>cat package.json | jq '.description'</span>
+              <span>cat package.json | jq &apos;.description&apos;</span>
             </div>
-            
-            <h3 className="text-solarized-blue font-medium mb-3">Pixel Perfect</h3>
-            <p className="text-solarized-text text-sm leading-relaxed mb-4">
+
+            <h3 className="text-solarized-blue mb-3 font-medium">
+              Pixel Perfect
+            </h3>
+            <p className="text-solarized-text mb-4 text-sm leading-relaxed">
               業務やその他の開発で得た知見や、このような説明が欲しかったな...という内容を中心に、技術的なトピックを扱ったブログです。
             </p>
-            <p className="text-solarized-muted text-xs leading-relaxed mb-4">
+            <p className="text-solarized-muted mb-4 text-xs leading-relaxed">
               主にWeb技術を中心に取り扱っていると思いますが、その他の技術やトピックについても触れているかもしれません。
             </p>
-            
-            <div className="mb-4 text-solarized-green text-sm">
+
+            <div className="text-solarized-green mb-4 text-sm">
               <span className="text-solarized-muted">$&nbsp;</span>
               <span>npm ls --depth=0</span>
             </div>
-            
-            <div className="text-xs text-solarized-muted">
+
+            <div className="text-solarized-muted text-xs">
               <div>├── next.js@15.x</div>
               <div>├── tailwindcss@4.x</div>
               <div>├── typescript@5.x</div>
@@ -124,23 +137,27 @@ export default function About() {
 
       {/* Skills Section */}
       <div className="my-8">
-        <div className="font-mono text-lg text-solarized-green mb-4">
+        <div className="text-solarized-green mb-4 font-mono text-lg">
           <span className="text-solarized-muted">$&nbsp;</span>
           <span className="text-solarized-green">cat skills.json</span>
         </div>
-        
-        <div className="bg-solarized-darker border border-solarized-muted p-6" data-dynamic-border-container>
+
+        <div
+          className="bg-solarized-darker border-solarized-muted border p-6"
+          data-dynamic-border-container
+        >
           <DynamicBorder label="Technical Skills" type="top" />
-          <div className="px-4 py-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
+          <div className="grid grid-cols-1 gap-6 px-4 py-4 md:grid-cols-2 lg:grid-cols-4">
             {/* Backend */}
             <div>
-              <h3 className="text-solarized-blue font-medium mb-3 text-sm">Backend</h3>
+              <h3 className="text-solarized-blue mb-3 text-sm font-medium">
+                Backend
+              </h3>
               <div className="space-y-2">
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">Java</span>
                 </div>
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">Go</span>
                 </div>
               </div>
@@ -148,12 +165,14 @@ export default function About() {
 
             {/* Frontend */}
             <div>
-              <h3 className="text-solarized-blue font-medium mb-3 text-sm">Frontend</h3>
+              <h3 className="text-solarized-blue mb-3 text-sm font-medium">
+                Frontend
+              </h3>
               <div className="space-y-2">
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">TypeScript</span>
                 </div>
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">React</span>
                 </div>
               </div>
@@ -161,12 +180,14 @@ export default function About() {
 
             {/* Cloud */}
             <div>
-              <h3 className="text-solarized-blue font-medium mb-3 text-sm">Cloud</h3>
+              <h3 className="text-solarized-blue mb-3 text-sm font-medium">
+                Cloud
+              </h3>
               <div className="space-y-2">
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">AWS</span>
                 </div>
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">Google Cloud</span>
                 </div>
               </div>
@@ -174,15 +195,17 @@ export default function About() {
 
             {/* Tools */}
             <div>
-              <h3 className="text-solarized-blue font-medium mb-3 text-sm">Tools</h3>
+              <h3 className="text-solarized-blue mb-3 text-sm font-medium">
+                Tools
+              </h3>
               <div className="space-y-2">
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">Docker</span>
                 </div>
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">Git</span>
                 </div>
-                <div className="bg-solarized-dark border border-solarized-muted px-3 py-1 text-xs">
+                <div className="bg-solarized-dark border-solarized-muted border px-3 py-1 text-xs">
                   <span className="text-solarized-text">DevContainer</span>
                 </div>
               </div>
@@ -194,23 +217,28 @@ export default function About() {
 
       {/* Contact Section */}
       <div className="my-8">
-        <div className="font-mono text-lg text-solarized-green mb-4">
+        <div className="text-solarized-green mb-4 font-mono text-lg">
           <span className="text-solarized-muted">$&nbsp;</span>
-          <span className="text-solarized-green">echo "Contact Information"</span>
+          <span className="text-solarized-green">
+            echo &quot;Contact Information&quot;
+          </span>
         </div>
-        
-        <div className="bg-solarized-darker border border-solarized-muted p-6 font-mono" data-dynamic-border-container>
+
+        <div
+          className="bg-solarized-darker border-solarized-muted border p-6 font-mono"
+          data-dynamic-border-container
+        >
           <DynamicBorder label="Contact" type="top" />
           <div className="px-4 py-4">
-            <p className="text-solarized-text text-sm mb-4 leading-relaxed">
+            <p className="text-solarized-text mb-4 text-sm leading-relaxed">
               ブログの内容に関するご質問や、お仕事のご依頼などは以下の方法でご連絡ください。
             </p>
-            
-            <div className="mb-4 text-solarized-green text-sm">
+
+            <div className="text-solarized-green mb-4 text-sm">
               <span className="text-solarized-muted">$&nbsp;</span>
               <span>curl -s https://api.github.com/users/k65miyazakiy</span>
             </div>
-            
+
             <div className="space-y-2 text-sm">
               <div className="flex items-center">
                 <span className="text-solarized-cyan mr-3 w-16">GitHub:</span>
@@ -246,16 +274,16 @@ export default function About() {
           <span className="text-solarized-muted">$&nbsp;</span>
           <span>ls -la</span>
         </div>
-        <div className="bg-solarized-darker border border-solarized-muted p-4 text-sm space-y-2">
+        <div className="bg-solarized-darker border-solarized-muted space-y-2 border p-4 text-sm">
           <Link
             href="/"
-            className="block text-solarized-blue hover:text-solarized-cyan transition-colors duration-300"
+            className="text-solarized-blue hover:text-solarized-cyan block transition-colors duration-300"
           >
             ← ホームに戻る
           </Link>
           <Link
             href="/allposts"
-            className="block text-solarized-blue hover:text-solarized-cyan transition-colors duration-300"
+            className="text-solarized-blue hover:text-solarized-cyan block transition-colors duration-300"
           >
             全記事を表示する →
           </Link>

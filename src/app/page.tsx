@@ -36,14 +36,14 @@ export default function Home() {
           <span className="text-solarized-green">
             git log --oneline -n {HOME_POSTS_COUNT}{" "}
             <span className="text-solarized-muted ml-2 text-base">
-              // 最新の記事
+              {"//"} 最新の記事
             </span>
           </span>
         </div>
 
         <div className="bg-solarized-darker border-solarized-muted border p-4">
           <div className="space-y-0">
-            {latestPosts.map((post, index) => (
+            {latestPosts.map((post) => (
               <ArticleListCard
                 key={post.slug}
                 {...post.frontMatter}
@@ -61,7 +61,7 @@ export default function Home() {
             <span className="text-solarized-muted">$&nbsp;</span>
             <span>git log --all</span>
             <span className="text-solarized-muted ml-2">
-              // すべてのcommitを表示
+              {"//"} すべてのcommitを表示
             </span>
           </Link>
         </div>
@@ -76,7 +76,7 @@ export default function Home() {
         <div className="bg-solarized-darker border-solarized-muted border p-4 text-sm">
           <div className="text-solarized-text mb-2">On branch main</div>
           <div className="text-solarized-text mb-2">
-            Your branch is up to date with 'origin/main'.
+            Your branch is up to date with &apos;origin/main&apos;.
           </div>
           <div className="text-solarized-green">
             nothing to commit, working tree clean
