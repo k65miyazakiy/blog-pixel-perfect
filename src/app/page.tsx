@@ -34,7 +34,10 @@ export default function Home() {
         <div className="text-solarized-green mb-4 font-mono text-lg">
           <span className="text-solarized-muted">$&nbsp;</span>
           <span className="text-solarized-green">
-            git log --oneline -n {HOME_POSTS_COUNT}
+            git log --oneline -n {HOME_POSTS_COUNT}{" "}
+            <span className="text-solarized-muted ml-2 text-base">
+              // 最新の記事
+            </span>
           </span>
         </div>
 
