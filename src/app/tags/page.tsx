@@ -1,5 +1,6 @@
 import { getPostsMeta } from "@/app/lib/util";
 import Link from "next/link";
+import { DynamicBorder } from "@/app/components/DynamicBorder";
 
 export default function TagsPage() {
   // 全投稿からタグを抽出してカウント
@@ -22,40 +23,81 @@ export default function TagsPage() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="mt-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">
-          タグ一覧{" "}
-          <span className="text-sm text-gray-500">（{sortedTags.length}）</span>
-        </h1>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-solarized-dark min-h-screen">
+      {/* Terminal Header */}
+      <div className="py-8 font-mono">
+        <div className="border border-solarized-darker bg-solarized-dark p-6" data-dynamic-border-container>
+          <DynamicBorder label="Repository: tag index" type="top" />
+          <div className="px-4 py-4">
+            <h1 className="text-2xl font-medium text-solarized-blue mb-2">
+              $ git tag --list
+            </h1>
+            <p className="text-solarized-text text-sm mb-1">
+              登録されているタグ一覧 ({sortedTags.length} tags)
+            </p>
+            <p className="text-solarized-muted text-xs">
+              タグをクリックすると関連記事を表示します
+            </p>
+          </div>
+          <DynamicBorder label="Repository: tag index" type="bottom" />
+        </div>
       </div>
 
-      <div className="mx-auto my-8 max-w-4xl rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <ul className="flex flex-wrap justify-center gap-4">
-          {sortedTags.map(([tag, count]) => (
-            <li key={tag}>
-              <Link
-                href={`/tags/${tag}`}
-                className="flex items-center rounded-full bg-indigo-50 px-4 py-2 text-indigo-700 transition-colors duration-300 hover:bg-indigo-100"
-              >
-                <span className="mr-1 text-indigo-500">#</span>
-                <span>{tag}</span>
-                <span className="ml-2 rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-800">
-                  {count}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+      {/* Tags List */}
+      <div className="my-8">
+        <div className="font-mono text-lg text-solarized-green mb-4">
+          <span className="text-solarized-muted">$&nbsp;</span>
+          <span className="text-solarized-green">git tag --sort=-version:refname</span>
+        </div>
+        
+        <div className="bg-solarized-darker border border-solarized-muted p-6" data-dynamic-border-container>
+          <DynamicBorder label="Available Tags" type="top" />
+          <div className="px-4 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {sortedTags.map(([tag, count]) => (
+                <Link
+                  key={tag}
+                  href={`/tags/${tag}`}
+                  className="group block bg-solarized-dark border border-solarized-muted p-3 transition-all duration-300 hover:bg-solarized-darker hover:border-solarized-blue font-mono"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="text-solarized-cyan mr-1">#</span>
+                      <span className="text-solarized-text group-hover:text-solarized-blue transition-colors">
+                        {tag}
+                      </span>
+                    </div>
+                    <div className="flex items-center text-xs">
+                      <span className="bg-solarized-muted text-solarized-dark px-2 py-1 rounded">
+                        {count}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-solarized-muted">
+                    {count} {count === 1 ? 'post' : 'posts'}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+          <DynamicBorder label="Available Tags" type="bottom" />
+        </div>
       </div>
 
-      <div className="mt-10 text-center">
-        <Link
-          href="/allposts"
-          className="inline-flex items-center rounded-md border border-indigo-600 px-4 py-2 text-sm font-medium text-indigo-600 shadow-sm transition-colors duration-300 hover:bg-indigo-600 hover:text-white"
-        >
-          すべての記事を見る
-        </Link>
+      {/* Navigation */}
+      <div className="my-8 font-mono">
+        <div className="text-solarized-green mb-2">
+          <span className="text-solarized-muted">$&nbsp;</span>
+          <span>git log --all</span>
+        </div>
+        <div className="bg-solarized-darker border border-solarized-muted p-4 text-sm">
+          <Link
+            href="/allposts"
+            className="text-solarized-blue hover:text-solarized-cyan transition-colors duration-300"
+          >
+            すべての記事を表示する →
+          </Link>
+        </div>
       </div>
     </div>
   );
