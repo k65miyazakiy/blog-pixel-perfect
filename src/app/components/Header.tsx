@@ -12,13 +12,13 @@ export const Header = () => {
         <nav className="font-mono">
           <ul className="flex space-x-6">
             <li>
-              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/allposts">git log</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/allposts">/posts</Link>
             </li>
             <li>
-              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/tags">git tag</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/tags">/tags</Link>
             </li>
             <li>
-              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/about">git config</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/about">/about</Link>
             </li>
           </ul>
         </nav>
