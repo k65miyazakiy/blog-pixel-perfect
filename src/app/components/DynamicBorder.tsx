@@ -25,25 +25,25 @@ export const DynamicBorder: React.FC<DynamicBorderProps> = ({
       
       // 測定用の要素で必要な幅を計算
       if (type === "top") {
-        measureRef.current.textContent = `┌─ ${label} `;
-        const usedWidth = measureRef.current.offsetWidth;
-        const endCharWidth = 10; // "┐" の幅の推定
-        const availableWidth = containerWidth - usedWidth - endCharWidth;
-        
-        // 一文字の幅を測定
-        measureRef.current.textContent = "─";
-        const charWidth = measureRef.current.offsetWidth;
-        
-        const numChars = Math.max(Math.floor(availableWidth / charWidth), 0);
-        setBorderChars("─".repeat(numChars));
+      measureRef.current.textContent = `┌─ ${label} `;
+      const usedWidth = measureRef.current.offsetWidth;
+      const endCharWidth = 10; // "┐" の幅の推定
+      const availableWidth = containerWidth - usedWidth - endCharWidth;
+      
+      // 一文字の幅を測定
+      measureRef.current.textContent = "─";
+      const charWidth = measureRef.current.offsetWidth;
+      
+      const numChars = Math.max(Math.floor(availableWidth / charWidth), 0);
+      setBorderChars("─".repeat(numChars));
       } else {
-        // bottomは単純に全幅から両端を引く
-        measureRef.current.textContent = "─";
-        const charWidth = measureRef.current.offsetWidth;
-        const endCharsWidth = charWidth * 2; // "└" + "┘"
-        const availableWidth = containerWidth - endCharsWidth;
-        const numChars = Math.max(Math.floor(availableWidth / charWidth), 0);
-        setBorderChars("─".repeat(numChars));
+      // bottomは上の枠線より1文字分長くする
+      measureRef.current.textContent = "─";
+      const charWidth = measureRef.current.offsetWidth;
+      const endCharsWidth = charWidth * 2; // "└" + "┘"
+      const availableWidth = containerWidth - endCharsWidth;
+      const numChars = Math.max(Math.floor(availableWidth / charWidth) + 1, 1); // +1で1文字分長く
+      setBorderChars("─".repeat(numChars));
       }
     };
 
