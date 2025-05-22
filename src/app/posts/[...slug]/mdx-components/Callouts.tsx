@@ -109,13 +109,13 @@ export const Callout = (props: {
   return (
     <div className={styles.className} data-dynamic-border-container>
       <DynamicBorder label={styles.iconLabel} type="top" />
-      <div className="px-2">
+      <div className="px-6 py-4 pr-12">
         <div className="flex gap-3 items-start">
           <div className={`${styles.iconColor} flex w-[16px] items-center justify-center pt-0.5`}>
             <FontAwesomeIcon icon={styles.icon} className="h-[14px]" />
           </div>
-          <div className="flex-1">
-            <p className="text-sm text-solarized-text leading-relaxed">{props.message}</p>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-solarized-text leading-relaxed break-words">{props.message}</p>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ export const CB = ({ content, lang, fileName }: CodeBlockProps) => {
     >
       <div className="p-4">
         <DynamicBorder label={`File: ${displayFileName}`} type="top" />
-        <div className="px-4 py-2">
+        <div className="px-4 py-2 pr-12">
           <div className="text-solarized-cyan mb-3 text-xs">
             <span className="text-solarized-muted">$&nbsp;</span>
             <span>cat {displayFileName}</span>
