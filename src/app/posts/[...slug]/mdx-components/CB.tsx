@@ -28,8 +28,7 @@ export const CB = ({ content, lang, fileName }: CodeBlockProps) => {
           style={prism}
           showLineNumbers
           customStyle={{
-            backgroundColor: "white",
-            border: "solid 1px #e2e8f0",
+            border: "solid 1px",
             borderRadius: "0.5rem",
           }}
         >
