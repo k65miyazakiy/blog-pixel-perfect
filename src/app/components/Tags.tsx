@@ -10,30 +10,22 @@ export const Tags = ({
 }) => {
   const router = useRouter();
   return tags ? (
-    <ul className="flex flex-wrap gap-2">
+    <span className="flex flex-wrap gap-2">
       {tags.map((tag) => (
-        <li
+        <span
           key={tag}
-          className={`inline-flex items-center rounded-full px-3 py-0.5 text-xs font-medium ${enableLink ? "bg-indigo-100 text-indigo-700 transition-colors duration-300 hover:bg-indigo-200" : "bg-gray-100 text-gray-700"}`}
+          className={`font-mono text-xs ${enableLink ? "text-solarized-cyan cursor-pointer hover:text-solarized-blue transition-colors duration-300" : "text-solarized-muted"}`}
           onClick={(e) => {
-            e.stopPropagation();
-            router.push(`/tags/${tag}`);
+            if (enableLink) {
+              e.stopPropagation();
+              router.push(`/tags/${tag}`);
+            }
           }}
         >
-          {enableLink ? (
-            <div className="flex cursor-pointer items-center">
-              <span className="mr-1 text-indigo-500">#</span>
-              {tag}
-            </div>
-          ) : (
-            <span>
-              <span className="mr-1 text-gray-500">#</span>
-              {tag}
-            </span>
-          )}
-        </li>
+          #{tag}
+        </span>
       ))}
-    </ul>
+    </span>
   ) : (
     <></>
   );

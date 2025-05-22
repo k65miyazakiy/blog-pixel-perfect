@@ -61,24 +61,38 @@ const ToC: React.FC<ToCProps> = ({ toc }) => {
   }, [toc]);
 
   const activeCss = (id: string) => {
-    return id === activeId ? "text-sky-600 font-bold" : "text-gray-400";
+    return id === activeId
+      ? "text-solarized-blue font-medium"
+      : "text-solarized-muted";
   };
 
   return (
-    <div>
-      <h2 className="text-xs font-bold text-gray-800">目次</h2>
-      <ul>
-        {toc.map((item) => (
-          <li key={item.id}>
-            <a
-              href={`#${item.id}`}
-              className={`mt-2 block text-xs ${activeCss(item.id)}`}
-            >
-              {item.value}
-            </a>
-          </li>
-        ))}
-      </ul>
+    <div className="border-solarized-darker bg-solarized-dark border p-4 font-mono">
+      <div className="text-solarized-muted mb-2 text-xs">
+        ┌─ ToC ──────────────────────────────────┐
+      </div>
+      <div className="px-2">
+        <h2 className="text-solarized-green mb-3 text-xs font-medium">
+          $ cat outline.md
+        </h2>
+        <ul className="space-y-1">
+          {toc.map((item) => (
+            <li key={item.id}>
+              <a
+                href={`#${item.id}`}
+                className={`hover:text-solarized-blue block text-xs leading-relaxed transition-colors duration-300 ${activeCss(item.id)}`}
+                title={item.value}
+              >
+                <span className="text-solarized-cyan inline-block w-3">▸</span>
+                <span className="break-words">{item.value}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="text-solarized-muted mt-2 text-xs">
+        └────────────────────────────────────────┘
+      </div>
     </div>
   );
 };

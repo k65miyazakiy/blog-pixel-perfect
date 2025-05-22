@@ -1,7 +1,16 @@
 import { ClassAttributes, HTMLAttributes, JSX } from "react";
 import { BQ } from "./BQ";
 import { CB } from "./CB";
-import { Caution, Info } from "./Callouts";
+import { 
+  Info, 
+  Tip, 
+  Note, 
+  Warning, 
+  Caution, 
+  Danger, 
+  Success, 
+  Error 
+} from "./Callouts";
 import { Img } from "./Image";
 import { Test } from "./Test";
 
@@ -13,8 +22,15 @@ const MDXComponents = {
   Test,
   BQ, // BlockQuote
   CB, // CodeBlock
+  // Callouts
   Info,
+  Tip,
+  Note,
+  Warning,
   Caution,
+  Danger,
+  Success,
+  Error,
   Img,
 };
 

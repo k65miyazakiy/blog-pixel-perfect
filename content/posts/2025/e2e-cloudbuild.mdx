@@ -39,15 +39,17 @@ CICDはビルドタスクは順々に実行されるので、前述の概念を�
 
 本稿では、上述の事象に対してCloud Buildの仕様を確認しながら解決のポイントを説明していきます。
 
-<Caution message="アプリに関しては実装によって千差万別なので、ここではインフラ面を重点的に説明します。
-アプリ面で言うと外部システムのモッキングや認証の迂回方法が課題になってくると思います。" />
+<Caution
+  message="アプリに関しては実装によって千差万別なので、ここではインフラ面を重点的に説明します。
+アプリ面で言うと外部システムのモッキングや認証の迂回方法が課題になってくると思います。"
+/>
 
 はじめにざっくりいうと、**定義したパイプラインおよびステップはどのような環境で実行されるのか、というCloud Buildの基礎的な知識が重要**になってきます。
 なので、最初にCloud Buildの基盤仕様をざっくり確認しておきましょう。
 
 ## Cloud Buildの基盤仕様
 
-まず重要な点ですが、**Cloud Buildではビルドの各ステップはDockerコンテナとして実行**されます[*](https://cloud.google.com/build/docs/overview?hl=ja#docker)。
+まず重要な点ですが、**Cloud Buildではビルドの各ステップはDockerコンテナとして実行**されます[\*](https://cloud.google.com/build/docs/overview?hl=ja#docker)。
 この点の理解を深めるため、各ステップが（大雑把に）どのようなコマンドとして翻訳されるのか見ていきましょう。
 
 Cloud Buildでのビルド定義はjsonやyamlで記述されます。
@@ -62,7 +64,8 @@ steps:
   args: ['install']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/my-project-id/myimage', '.']
-`} />
+`}
+/>
 
 このスニペットは2つのステップから構成されていて、何をやっているかはなんとなくわかると思います。
 最初のステップでは`mvn install`でJavaアプリケーションのビルドに必要な依存をDLし、次のステップでdockerイメージとしてビルドを行っています。
@@ -92,7 +95,7 @@ steps:
 <CB  lang="text"
   fileName="bash-c"
   content={`// bashコマンドライン命令
->> /bin/bash -c 'echo "Command 1"                                                                                                                                                                    127 ↵ kussaka@kussatu-win11
+>> /bin/bash -c 'echo "Command 1"
 echo "Command 2"'
 
 // 実行結果
@@ -125,7 +128,11 @@ Cloud Buildの仕様について深掘りしなくても前述の課題は全部
 
 さらに、[リポジトリ連携をする場合（ほぼすると思います）は、リポジトリのシャローコピーが`/workspace`にコピー](https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github?hl=ja)されます。
 
-<BQ> ビルドを実行すると、Cloud Build は、リポジトリの内容を Cloud Build のデフォルトの作業ディレクトリ（/workspace）にコピーします。 </BQ>
+<BQ>
+  {" "}
+  ビルドを実行すると、Cloud Build は、リポジトリの内容を Cloud Build
+  のデフォルトの作業ディレクトリ（/workspace）にコピーします。{" "}
+</BQ>
 
 上記の話をまとめると、**コンテナのデフォルトの作業ディレクトリはリポジトリのルートディレクトリとなり、かつデータはパイプライン全体で共有される**となります。
 つまり、ここまでいろいろ書いてきたものの、そもそも気にしなくてもデータの共有は可能な場面が多いです。
@@ -155,21 +162,24 @@ Dockerコマンドを実行したコンテナ（ステップコンテナ）は�
   - name: 'gcr.io/cloud-builders/docker'
     args: ['run', '-d', '--name=nginx-server', 'nginx:latest']
 
-  # 1. 念のため5秒のsleepを挟む
-  - name: 'alpine'
-    entrypoint: 'sh'
-    args: ['-c', 'sleep 5']
+# 1. 念のため5秒のsleepを挟む
 
-  # 2. 全ネットワークにまたがり、現在起動中および停止中のコンテナ一覧を取得
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['ps', '-a', '--format', 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Networks}}']
+- name: 'alpine'
+  entrypoint: 'sh'
+  args: ['-c', 'sleep 5']
 
-  # 3. nginxへのcurlで疎通確認を行う
-  - name: 'gcr.io/cloud-builders/curl'
-    args: ['-s', '-v', 'http://nginx-server']
+# 2. 全ネットワークにまたがり、現在起動中および停止中のコンテナ一覧を取得
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['ps', '-a', '--format', 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Networks}}']
+
+# 3. nginxへのcurlで疎通確認を行う
+
+- name: 'gcr.io/cloud-builders/curl'
+  args: ['-s', '-v', 'http://nginx-server']
 
 options:
-  logging: CLOUD_LOGGING_ONLY`} />
+logging: CLOUD_LOGGING_ONLY`} />
 
 実行結果（抜粋）を見ていきましょう。ステップ0, 1は特に興味深いことはないので、まずはステップ2を見ていきます。
 
@@ -182,7 +192,8 @@ options:
 step_2                       gcr.io/cloud-builders/docker         Up Less than a second   cloudbuild
 nginx-server                 nginx:latest                         Up 8 seconds            bridge
 docker_token_container-xxx   gcr.io/cloud-builders/gcb-internal   Created                 bridge
-metadata                     gcr.io/cloud-builders/metadata       Up 29 seconds           bridge,cloudbuild `} />
+metadata                     gcr.io/cloud-builders/metadata       Up 29 seconds           bridge,cloudbuild `}
+/>
 
 この結果はステップ2の実行時点でパイプラインから認識できるコンテナの一覧を表示しています。
 
@@ -199,12 +210,14 @@ metadata                     gcr.io/cloud-builders/metadata       Up 29 seconds 
 ステップ0自体のコンテナは破棄されていますが、本ステップで起動したコンテナ自体はそのまま残っていて、コンテナとしてサービスを提供していることがわかります。
 
 ### ステップ3の結果
+
 <CB
   lang="text"
   fileName="background-container_result_step3.log"
   content={`
 * Could not resolve host: nginx-server
-* Closing connection 0 `} />
+* Closing connection 0 `}
+/>
 
 nginxコンテナが無事に立ち上がることを確認できたので、次は立ち上げたコンテナに対してcurlを実行していますが対象のホストを解決できず疎通に失敗していることがわかります。
 この点の解決のため、最後の課題を見ていきます。
@@ -222,7 +235,11 @@ nginxコンテナが無事に立ち上がることを確認できたので、次
 接続先のネットワークをデフォルトの`bridge`、もしくは`cloudbuild`どちらに寄せる構成も可能だと思いますが、基本的には`cloudbuild`ネットワークに寄せるのをおススメします。
 というのも、[ユーザー定義のネットワークではコンテナ名を利用した疎通が出来るので、同一ネットワーク内でのアクセスが容易になる](https://docs.docker.com/engine/network/tutorials/standalone/#use-user-defined-bridge-networks)からです。
 
-<BQ>On user-defined networks like alpine-net, containers can not only communicate by IP address, but can also resolve a container name to an IP address. This capability is called automatic service discovery.</BQ>
+<BQ>
+  On user-defined networks like alpine-net, containers can not only communicate
+  by IP address, but can also resolve a container name to an IP address. This
+  capability is called automatic service discovery.
+</BQ>
 
 上のyamlでこれを修正してみましょう。途中の不要なステップは省略しています。
 
@@ -234,19 +251,20 @@ nginxコンテナが無事に立ち上がることを確認できたので、次
   - name: 'gcr.io/cloud-builders/docker'
     args: ['run', '-d', '--name=nginx-server', '--network=cloudbuild', 'nginx:latest']
 
-  # 1. nginxへのcurlで疎通確認を行う
-  - name: 'gcr.io/cloud-builders/curl'
-    args: ['-s', '-v', 'http://nginx-server']
+# 1. nginxへのcurlで疎通確認を行う
+
+- name: 'gcr.io/cloud-builders/curl'
+  args: ['-s', '-v', 'http://nginx-server']
 
 options:
-  logging: CLOUD_LOGGING_ONLY `} />
+logging: CLOUD_LOGGING_ONLY `} />
 
 前との違いはコンテナが所属するネットワークを指定するオプション`--network=cloudbuild`という部分のみです。
 また、**curlの引数がnginx-serverというコンテナ名で指定されている**部分に注目してください。
 
 実行結果は以下のようになります。
 
-<Img 
+<Img
   src="/2025/e2e-cloudbuild/background-container-ok.png"
   alt="nginxの疎通確認結果"
 />

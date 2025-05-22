@@ -2,23 +2,23 @@ import Link from "next/link";
 
 export const Header = () => {
   return (
-    <header className="border-b border-gray-200 bg-white shadow-sm">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <div>
-          <span className="text-2xl font-bold tracking-tight text-indigo-600 hover:text-indigo-800 transition-colors duration-300">
-            <Link href="/">/Pixel/Perfect</Link>
+    <header className="border-b border-solarized-darker bg-solarized-dark">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+        <div className="font-mono">
+          <span className="text-xl font-medium text-solarized-green hover:text-solarized-blue transition-colors duration-300">
+            <Link href="/">$ /pixel-perfect</Link>
           </span>
         </div>
-        <nav>
+        <nav className="font-mono">
           <ul className="flex space-x-6">
             <li>
-              <Link className="text-gray-600 hover:text-indigo-600 transition-colors duration-300" href="/allposts">記事一覧</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/allposts">/posts</Link>
             </li>
             <li>
-              <Link className="text-gray-600 hover:text-indigo-600 transition-colors duration-300" href="/tags">タグ</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/tags">/tags</Link>
             </li>
             <li>
-              <Link className="text-gray-600 hover:text-indigo-600 transition-colors duration-300" href="/about">About</Link>
+              <Link className="text-solarized-light hover:text-solarized-blue transition-colors duration-300" href="/about">/about</Link>
             </li>
           </ul>
         </nav>

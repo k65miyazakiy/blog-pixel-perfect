@@ -1,5 +1,6 @@
 import { Tags } from "@/app/components/Tags";
 import { TimeStamp } from "@/app/components/TimeStamp";
+import { DynamicBorder } from "@/app/components/DynamicBorder";
 import { getPost, getToC2 } from "@/app/lib/util";
 import fs from "fs";
 import path from "path";
@@ -18,25 +19,33 @@ export default async function Post({ params }: { params: Promise<Slug> }) {
   const toc = getToC2(slug);
 
   return (
-    <main className="flex justify-center">
-      <div id="centered-container" className="flex gap-8">
-        <article className="w-[768px] p-4">
-          <ArticleHeader
-            title={post.frontMatter.title}
-            createdAt={post.frontMatter.createdAt}
-            updatedAt={post.frontMatter.updatedAt}
-            tags={post.frontMatter.tags}
-          />
-          <hr className="mb-2" />
-          <div id="postContent">
-            <MDXRenderer source={post.source} />
-          </div>
-        </article>
-        <nav className="mt-[100px] w-[200px]">
-          <div id="sticky-container" className="sticky" style={{ top: "20px" }}>
-            <ToC toc={toc} />
-          </div>
-        </nav>
+    <main className="bg-solarized-dark min-h-screen">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-6 py-8">
+          <article className="flex-1 min-w-0">
+            <div className="border border-solarized-darker bg-solarized-dark p-6 font-mono" data-dynamic-border-container>
+              <DynamicBorder label={`File: ${slug.join('/')}.mdx`} type="top" />
+              <div className="px-4 py-4">
+                <ArticleHeader
+                  title={post.frontMatter.title}
+                  createdAt={post.frontMatter.createdAt}
+                  updatedAt={post.frontMatter.updatedAt}
+                  tags={post.frontMatter.tags}
+                />
+                <div className="border-t border-solarized-muted my-4"></div>
+                <div id="postContent">
+                  <MDXRenderer source={post.source} />
+                </div>
+              </div>
+              <DynamicBorder label={`File: ${slug.join('/')}.mdx`} type="bottom" />
+            </div>
+          </article>
+          <nav className="w-80 flex-shrink-0 hidden lg:block">
+            <div className="sticky top-8">
+              <ToC toc={toc} />
+            </div>
+          </nav>
+        </div>
       </div>
     </main>
   );
@@ -54,11 +63,27 @@ const ArticleHeader = ({
   tags?: string[];
 }) => {
   return (
-    <div className="article-meta">
-      <h1 className="mb-2 text-xl">{title}</h1>
-      <div className="mb-4 flex items-center gap-3">
-        <TimeStamp createdAt={createdAt} updatedAt={updatedAt} />
-        <Tags tags={tags} enableLink />
+    <div className="article-meta font-mono">
+      <h1 className="mb-4 text-2xl font-medium text-solarized-blue">{title}</h1>
+      <div className="mb-4 flex items-center gap-4 text-sm">
+        <span className="text-solarized-muted">$&nbsp;</span>
+        <span className="text-solarized-yellow">git log --format=fuller</span>
+      </div>
+      <div className="flex items-center gap-4 text-xs bg-solarized-darker p-3 border border-solarized-muted">
+        <div className="flex items-center gap-2">
+          <span className="text-solarized-cyan">Author:</span>
+          <span className="text-solarized-text">kussaka</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-solarized-cyan">Date:</span>
+          <TimeStamp createdAt={createdAt} updatedAt={updatedAt} />
+        </div>
+        {tags && tags.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className="text-solarized-cyan">Tags:</span>
+            <Tags tags={tags} enableLink />
+          </div>
+        )}
       </div>
     </div>
   );
