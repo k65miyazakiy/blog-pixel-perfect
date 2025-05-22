@@ -1,8 +1,81 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@theme {
+  --color-solarized-dark: #002b36;
+  --color-solarized-darker: #073642;
+  --color-solarized-muted: #586e75;
+  --color-solarized-dim: #657b83;
+  --color-solarized-text: #839496;
+  --color-solarized-light: #93a1a1;
+  --color-solarized-lighter: #eee8d5;
+  --color-solarized-lightest: #fdf6e3;
+  --color-solarized-yellow: #b58900;
+  --color-solarized-orange: #cb4b16;
+  --color-solarized-red: #dc322f;
+  --color-solarized-magenta: #d33682;
+  --color-solarized-violet: #6c71c4;
+  --color-solarized-blue: #268bd2;
+  --color-solarized-cyan: #2aa198;
+  --color-solarized-green: #859900;
+  
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
 
 /* ベースフォント・テキスト設定 */
 body {
-  @apply text-gray-800 antialiased;
+  @apply text-solarized-text antialiased bg-solarized-dark;
+}
+
+/* TUI風のボーダー文字 */
+.tui-border {
+  font-family: monospace;
+  color: #586e75;
+}
+
+.tui-box {
+  border: 1px solid #073642;
+  position: relative;
+}
+
+.tui-box::before {
+  content: '┌';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  background: #002b36;
+  color: #586e75;
+}
+
+.tui-box::after {
+  content: '┐';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  background: #002b36;
+  color: #586e75;
+}
+
+/* Git log風のコミットライン */
+.commit-line {
+  position: relative;
+}
+
+.commit-line::before {
+  content: '●';
+  position: absolute;
+  left: -1.5rem;
+  color: #859900;
+  font-weight: bold;
+}
+
+.commit-line::after {
+  content: '│';
+  position: absolute;
+  left: -1.45rem;
+  top: 1.2rem;
+  height: 100%;
+  color: #586e75;
 }
 
 /* グラデーションアクセント（ヒーローやセクション区切りなどで利用可能） */

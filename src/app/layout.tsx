@@ -4,8 +4,8 @@ import { Header } from "./components/Header";
 import "./globals.css";
 import "./lib/fontawesome";
 
-import { Noto_Sans } from "next/font/google";
-const NotoSans = Noto_Sans({ weight: "400", subsets: ["latin"] });
+import { JetBrains_Mono } from "next/font/google";
+const JetBrainsMono = JetBrains_Mono({ weight: ["400", "500", "600"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Pixel Perfect",
@@ -25,7 +25,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/pixel-p-modified.svg" type="image/svg+xml" />
       </head>
-      <body className={NotoSans.className}>
+      <body className={JetBrainsMono.className}>
         <div id="flex-container" className="flex min-h-screen flex-col">
           <Header />
           <div id="expansible-content-container" className="flex-1">
