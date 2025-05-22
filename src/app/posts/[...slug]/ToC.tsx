@@ -61,31 +61,37 @@ const ToC: React.FC<ToCProps> = ({ toc }) => {
   }, [toc]);
 
   const activeCss = (id: string) => {
-    return id === activeId ? "text-solarized-blue font-medium" : "text-solarized-muted";
+    return id === activeId
+      ? "text-solarized-blue font-medium"
+      : "text-solarized-muted";
   };
 
   return (
-    <div className="border border-solarized-darker bg-solarized-dark p-4 font-mono">
-      <div className="mb-2 text-solarized-muted text-xs">
-        ┌─ Table of Contents ─────────────────────────────────┐
+    <div className="border-solarized-darker bg-solarized-dark border p-4 font-mono">
+      <div className="text-solarized-muted mb-2 text-xs">
+        ┌─ ToC ──────────────────────────────────┐
       </div>
       <div className="px-2">
-        <h2 className="text-xs font-medium text-solarized-green mb-3">$ cat outline.md</h2>
-        <ul className="space-y-2">
+        <h2 className="text-solarized-green mb-3 text-xs font-medium">
+          $ cat outline.md
+        </h2>
+        <ul className="space-y-1">
           {toc.map((item) => (
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
-                className={`block text-xs transition-colors duration-300 hover:text-solarized-blue ${activeCss(item.id)}`}
+                className={`hover:text-solarized-blue block text-xs leading-relaxed transition-colors duration-300 ${activeCss(item.id)}`}
+                title={item.value}
               >
-                <span className="text-solarized-cyan">▸</span> {item.value}
+                <span className="text-solarized-cyan inline-block w-3">▸</span>
+                <span className="break-words">{item.value}</span>
               </a>
             </li>
           ))}
         </ul>
       </div>
-      <div className="mt-2 text-solarized-muted text-xs">
-        └─────────────────────────────────────────────────────────┘
+      <div className="text-solarized-muted mt-2 text-xs">
+        └────────────────────────────────────────┘
       </div>
     </div>
   );

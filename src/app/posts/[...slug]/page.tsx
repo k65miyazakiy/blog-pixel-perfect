@@ -1,5 +1,6 @@
 import { Tags } from "@/app/components/Tags";
 import { TimeStamp } from "@/app/components/TimeStamp";
+import { DynamicBorder } from "@/app/components/DynamicBorder";
 import { getPost, getToC2 } from "@/app/lib/util";
 import fs from "fs";
 import path from "path";
@@ -20,12 +21,10 @@ export default async function Post({ params }: { params: Promise<Slug> }) {
   return (
     <main className="bg-solarized-dark min-h-screen">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex gap-8 py-8">
-          <article className="flex-1 max-w-4xl">
-            <div className="border border-solarized-darker bg-solarized-dark p-6 font-mono">
-              <div className="mb-2 text-solarized-muted text-sm">
-                ┌─ File: {slug.join('/')}.mdx ──────────────────────────────────────────────┐
-              </div>
+        <div className="flex gap-6 py-8">
+          <article className="flex-1 min-w-0">
+            <div className="border border-solarized-darker bg-solarized-dark p-6 font-mono" data-dynamic-border-container>
+              <DynamicBorder label={`File: ${slug.join('/')}.mdx`} type="top" />
               <div className="px-4 py-4">
                 <ArticleHeader
                   title={post.frontMatter.title}
@@ -38,12 +37,10 @@ export default async function Post({ params }: { params: Promise<Slug> }) {
                   <MDXRenderer source={post.source} />
                 </div>
               </div>
-              <div className="text-solarized-muted text-sm">
-                └─────────────────────────────────────────────────────────────────────┘
-              </div>
+              <DynamicBorder label={`File: ${slug.join('/')}.mdx`} type="bottom" />
             </div>
           </article>
-          <nav className="w-64 flex-shrink-0">
+          <nav className="w-80 flex-shrink-0 hidden lg:block">
             <div className="sticky top-8">
               <ToC toc={toc} />
             </div>
