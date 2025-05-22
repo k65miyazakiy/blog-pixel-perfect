@@ -14,7 +14,7 @@ export default function Home() {
           <div className="mb-2 text-solarized-muted text-sm">
             ┌─ Repository: pixel-perfect ─────────────────────────────────────────┐
           </div>
-          <div className="text-center py-4">
+          <div className="py-4 px-4">
             <h1 className="text-3xl font-medium text-solarized-blue mb-2">
               /pixel-perfect
             </h1>
@@ -34,7 +34,7 @@ export default function Home() {
       {/* Recent Commits Section */}
       <div className="my-8">
         <div className="font-mono text-lg text-solarized-green mb-4">
-          <span className="text-solarized-muted">$ </span>
+          <span className="text-solarized-muted">$&nbsp;</span>
           <span className="text-solarized-green">git log --oneline -n {HOME_POSTS_COUNT}</span>
         </div>
         
@@ -51,7 +51,7 @@ export default function Home() {
             href="/allposts"
             className="inline-flex items-center text-solarized-blue hover:text-solarized-cyan transition-colors duration-300"
           >
-            <span className="text-solarized-muted">$ </span>
+            <span className="text-solarized-muted">$&nbsp;</span>
             <span>git log --all</span>
             <span className="ml-2 text-solarized-muted">// すべてのcommitを表示</span>
           </Link>
@@ -61,7 +61,7 @@ export default function Home() {
       {/* Status Section */}
       <div className="my-8 font-mono">
         <div className="text-solarized-green mb-2">
-          <span className="text-solarized-muted">$ </span>
+          <span className="text-solarized-muted">$&nbsp;</span>
           <span>git status</span>
         </div>
         <div className="bg-solarized-darker border border-solarized-muted p-4 text-sm">
