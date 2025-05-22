@@ -1,20 +1,21 @@
 import { faCircleExclamation, faInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DynamicBorder } from "@/app/components/DynamicBorder";
 
 const Styles = {
   info: {
-    className: "border-l-2 border-blue-500 px-4 py-2 mb-2",
-    icon: faInfo, // Iconは改善の余地アリ
-    iconLabel: "Info",
-    iconColor: "text-blue-600",
-    lableColor: "text-blue-700",
+    className: "border-l-2 border-solarized-blue bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    icon: faInfo,
+    iconLabel: "INFO",
+    iconColor: "text-solarized-blue",
+    labelColor: "text-solarized-blue",
   },
   caution: {
-    className: "border-l-2 border-red-500 px-4 py-2 mb-2",
-    icon: faCircleExclamation, // Iconは改善の余地アリ
-    iconLabel: "Caution",
-    iconColor: "text-red-600",
-    lableColor: "text-red-700",
+    className: "border-l-2 border-solarized-red bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    icon: faCircleExclamation,
+    iconLabel: "CAUTION",
+    iconColor: "text-solarized-red",
+    labelColor: "text-solarized-red",
   },
 };
 
@@ -26,25 +27,25 @@ export const Caution = (props: { message: string }) => {
   return <Callout type="caution" message={props.message} />;
 };
 
-// TODO 位置調整方法に改善の余地アリ。
 export const Callout = (props: {
   type: "info" | "caution";
   message: string;
 }) => {
   const styles = Styles[props.type];
   return (
-    <div className={styles.className}>
-      <div className={`mb-2 flex gap-2`}>
-        <div
-          className={`${styles.iconColor} flex w-[12px] items-center justify-center`}
-        >
-          <FontAwesomeIcon icon={styles.icon} className="h-[14px] pb-[1px]" />
-        </div>
-        <div className={`font-bold ${styles.lableColor}`}>
-          {styles.iconLabel}
+    <div className={styles.className} data-dynamic-border-container>
+      <DynamicBorder label={styles.iconLabel} type="top" />
+      <div className="px-2">
+        <div className="flex gap-3 items-start">
+          <div className={`${styles.iconColor} flex w-[16px] items-center justify-center pt-0.5`}>
+            <FontAwesomeIcon icon={styles.icon} className="h-[14px]" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm text-solarized-text leading-relaxed">{props.message}</p>
+          </div>
         </div>
       </div>
-      <p className="text-sm text-gray-700">{props.message}</p>
+      <DynamicBorder label={styles.iconLabel} type="bottom" />
     </div>
   );
 };
