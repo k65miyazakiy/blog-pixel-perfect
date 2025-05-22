@@ -97,33 +97,33 @@ pre {
 #postContent {
   /* 本文 */
   > p {
-    @apply mb-4 text-sm leading-relaxed text-gray-700;
+    @apply mb-4 text-sm leading-relaxed text-solarized-text;
   }
 
   /* ヘッダー類 */
   > h1 {
-    @apply mt-8 mb-4 text-3xl font-bold text-gray-900;
+    @apply mt-8 mb-4 text-3xl font-bold text-solarized-blue;
   }
 
   > h2 {
-    @apply mt-6 mb-4 border-b border-gray-200 pb-2 text-2xl font-bold text-gray-900;
+    @apply mt-6 mb-4 border-b border-solarized-muted pb-2 text-2xl font-bold text-solarized-blue;
   }
 
   > h3 {
-    @apply mt-5 mb-3 text-xl font-semibold text-gray-900;
+    @apply mt-5 mb-3 text-xl font-semibold text-solarized-light;
   }
 
   > h4 {
-    @apply mt-4 mb-2 text-lg font-medium text-gray-900;
+    @apply mt-4 mb-2 text-lg font-medium text-solarized-light;
   }
 
   /* リストのスタイリング（ネスト対応） */
   > ul,
   ol {
-    @apply mb-4 ml-6 text-sm text-gray-700;
+    @apply mb-4 ml-6 text-sm text-solarized-text;
 
     a {
-      @apply text-indigo-600 transition-colors duration-300 hover:text-indigo-800;
+      @apply text-solarized-blue transition-colors duration-300 hover:text-solarized-cyan;
     }
 
     > li {
@@ -166,29 +166,29 @@ pre {
 
   /* ブロッククォート */
   > blockquote {
-    @apply my-4 border-l-4 border-indigo-300 pl-4 text-gray-600 italic;
+    @apply my-4 border-l-4 border-solarized-cyan pl-4 text-solarized-light italic;
   }
 
   /* 水平線 */
   > hr {
-    @apply my-6 border-t border-gray-200;
+    @apply my-6 border-t border-solarized-muted;
   }
 
   /* リンク */
   > p > a {
-    @apply text-indigo-600 transition-colors duration-300 hover:text-indigo-800;
+    @apply text-solarized-blue transition-colors duration-300 hover:text-solarized-cyan;
   }
 
   /* インラインコード */
   > p > code {
-    @apply rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-indigo-700;
+    @apply rounded bg-solarized-darker px-1.5 py-0.5 font-mono text-sm text-solarized-green;
   }
 
   /* コードブロック */
   > pre {
-    @apply mb-4 overflow-auto rounded-md p-4 text-gray-100;
+    @apply mb-4 overflow-auto rounded-md p-4 bg-solarized-darker border border-solarized-muted;
     > code {
-      @apply font-mono text-sm leading-relaxed;
+      @apply font-mono text-sm leading-relaxed text-solarized-text;
     }
   }
 
@@ -196,18 +196,18 @@ pre {
   > table {
     @apply mb-4 w-full border-collapse;
     > thead {
-      @apply bg-gray-100;
+      @apply bg-solarized-darker;
       > tr {
         > th {
-          @apply border border-gray-300 px-4 py-2 text-left text-sm font-semibold text-gray-700;
+          @apply border border-solarized-muted px-4 py-2 text-left text-sm font-semibold text-solarized-light;
         }
       }
     }
     > tbody {
       > tr {
-        @apply hover:bg-gray-50;
+        @apply hover:bg-solarized-darker;
         > td {
-          @apply border border-gray-300 px-4 py-2 text-sm text-gray-700;
+          @apply border border-solarized-muted px-4 py-2 text-sm text-solarized-text;
         }
       }
     }
