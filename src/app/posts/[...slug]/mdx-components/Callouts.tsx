@@ -1,67 +1,75 @@
-import { 
-  faCircleExclamation, 
-  faInfo, 
-  faLightbulb, 
-  faTriangleExclamation, 
-  faCircleCheck, 
-  faBan, 
-  faFire 
+import { DynamicBorder } from "@/app/components/DynamicBorder";
+import {
+  faBan,
+  faCircleCheck,
+  faCircleExclamation,
+  faFire,
+  faInfo,
+  faLightbulb,
+  faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DynamicBorder } from "@/app/components/DynamicBorder";
 
 const Styles = {
   info: {
-    className: "border-l-2 border-solarized-blue bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-blue bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faInfo,
     iconLabel: "INFO",
     iconColor: "text-solarized-blue",
     labelColor: "text-solarized-blue",
   },
   tip: {
-    className: "border-l-2 border-solarized-green bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-green bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faLightbulb,
     iconLabel: "TIP",
     iconColor: "text-solarized-green",
     labelColor: "text-solarized-green",
   },
   note: {
-    className: "border-l-2 border-solarized-cyan bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-cyan bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faInfo,
     iconLabel: "NOTE",
     iconColor: "text-solarized-cyan",
     labelColor: "text-solarized-cyan",
   },
   warning: {
-    className: "border-l-2 border-solarized-yellow bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-yellow bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faTriangleExclamation,
     iconLabel: "WARNING",
     iconColor: "text-solarized-yellow",
     labelColor: "text-solarized-yellow",
   },
   caution: {
-    className: "border-l-2 border-solarized-orange bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-orange bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faCircleExclamation,
     iconLabel: "CAUTION",
     iconColor: "text-solarized-orange",
     labelColor: "text-solarized-orange",
   },
   danger: {
-    className: "border-l-2 border-solarized-red bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-red bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faFire,
     iconLabel: "DANGER",
     iconColor: "text-solarized-red",
     labelColor: "text-solarized-red",
   },
   success: {
-    className: "border-l-2 border-solarized-green bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-green bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faCircleCheck,
     iconLabel: "SUCCESS",
     iconColor: "text-solarized-green",
     labelColor: "text-solarized-green",
   },
   error: {
-    className: "border-l-2 border-solarized-red bg-solarized-darker px-4 py-3 mb-4 font-mono",
+    className:
+      "border-l-2 border-solarized-red bg-solarized-darker px-4 py-3 mb-4 font-mono",
     icon: faBan,
     iconLabel: "ERROR",
     iconColor: "text-solarized-red",
@@ -102,20 +110,32 @@ export const Error = (props: { message: string }) => {
 };
 
 export const Callout = (props: {
-  type: "info" | "tip" | "note" | "warning" | "caution" | "danger" | "success" | "error";
+  type:
+    | "info"
+    | "tip"
+    | "note"
+    | "warning"
+    | "caution"
+    | "danger"
+    | "success"
+    | "error";
   message: string;
 }) => {
   const styles = Styles[props.type];
   return (
     <div className={styles.className} data-dynamic-border-container>
       <DynamicBorder label={styles.iconLabel} type="top" />
-      <div className="px-6 py-4 pr-12">
-        <div className="flex gap-3 items-start">
-          <div className={`${styles.iconColor} flex w-[16px] items-center justify-center pt-0.5`}>
+      <div className="px-4 py-2 pr-10">
+        <div className="flex items-start gap-3">
+          <div
+            className={`${styles.iconColor} flex w-[16px] items-center justify-center pt-0.5`}
+          >
             <FontAwesomeIcon icon={styles.icon} className="h-[14px]" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-solarized-text leading-relaxed break-words">{props.message}</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-solarized-text text-sm leading-relaxed break-words">
+              {props.message}
+            </p>
           </div>
         </div>
       </div>
