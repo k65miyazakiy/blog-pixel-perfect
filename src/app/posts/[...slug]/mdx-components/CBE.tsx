@@ -1,4 +1,5 @@
 import { DynamicBorder } from "@/app/components/DynamicBorder";
+import { useEffect, useState } from "react";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import bash from "react-syntax-highlighter/dist/esm/languages/prism/bash";
 import css from "react-syntax-highlighter/dist/esm/languages/prism/css";
@@ -9,7 +10,6 @@ import python from "react-syntax-highlighter/dist/esm/languages/prism/python";
 import typescript from "react-syntax-highlighter/dist/esm/languages/prism/typescript";
 import yaml from "react-syntax-highlighter/dist/esm/languages/prism/yaml";
 import { solarizedDarkAtom } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { useEffect, useState } from "react";
 
 SyntaxHighlighter.registerLanguage("jsx", jsx);
 SyntaxHighlighter.registerLanguage("json", json);
@@ -31,8 +31,10 @@ type CodeBlockExternalProps = {
 
 // GitHub URLをraw URLに変換する関数
 const convertToRawUrl = (url: string): string => {
-  if (url.includes('github.com') && url.includes('/blob/')) {
-    return url.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
+  if (url.includes("github.com") && url.includes("/blob/")) {
+    return url
+      .replace("github.com", "raw.githubusercontent.com")
+      .replace("/blob/", "/");
   }
   return url;
 };
@@ -41,35 +43,39 @@ const convertToRawUrl = (url: string): string => {
 const extractFileName = (url: string): string => {
   try {
     const urlObj = new URL(url);
-    const pathSegments = urlObj.pathname.split('/');
-    return pathSegments[pathSegments.length - 1] || 'external-file';
+    const pathSegments = urlObj.pathname.split("/");
+    return pathSegments[pathSegments.length - 1] || "external-file";
   } catch {
-    return 'external-file';
+    return "external-file";
   }
 };
 
 // 行を抽出する関数
-const extractLines = (content: string, startLine?: number, endLine?: number): string => {
-  const lines = content.split('\n');
-  
+const extractLines = (
+  content: string,
+  startLine?: number,
+  endLine?: number,
+): string => {
+  const lines = content.split("\n");
+
   if (startLine === undefined && endLine === undefined) {
     return content;
   }
-  
+
   const start = Math.max(0, (startLine || 1) - 1); // 1-based to 0-based
   const end = endLine ? Math.min(lines.length, endLine) : lines.length;
-  
-  return lines.slice(start, end).join('\n');
+
+  return lines.slice(start, end).join("\n");
 };
 
 // Custom Code Block External component
-export const CBE = ({ 
-  url, 
-  lang, 
-  startLine, 
-  endLine, 
-  fileName, 
-  showLineNumbers = true 
+export const CBE = ({
+  url,
+  lang,
+  startLine,
+  endLine,
+  fileName,
+  showLineNumbers = true,
 }: CodeBlockExternalProps) => {
   const [fileContent, setFileContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -77,25 +83,27 @@ export const CBE = ({
 
   useEffect(() => {
     if (!url) return;
-    
+
     setLoading(true);
     setError("");
-    
+
     const fetchUrl = convertToRawUrl(url);
-    
+
     fetch(fetchUrl)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch: ${response.status} ${response.statusText}`,
+          );
         }
         return response.text();
       })
-      .then(text => {
+      .then((text) => {
         const extractedContent = extractLines(text, startLine, endLine);
         setFileContent(extractedContent);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err.message);
         setLoading(false);
       });
@@ -103,11 +111,10 @@ export const CBE = ({
 
   // ファイル名を決定
   const displayFileName = fileName || extractFileName(url);
-  
+
   // 行範囲の表示用テキスト
-  const lineRangeText = startLine || endLine 
-    ? `L${startLine || 1}-${endLine || 'end'}` 
-    : '';
+  const lineRangeText =
+    startLine || endLine ? `L${startLine || 1}-${endLine || "end"}` : "";
 
   // エラー状態の表示
   if (error) {
@@ -117,9 +124,7 @@ export const CBE = ({
           <div className="text-solarized-red text-sm">
             <strong>Error fetching external file:</strong> {error}
           </div>
-          <div className="text-solarized-muted text-xs mt-2">
-            URL: {url}
-          </div>
+          <div className="text-solarized-muted mt-2 text-xs">URL: {url}</div>
           {lineRangeText && (
             <div className="text-solarized-muted text-xs">
               Lines: {lineRangeText}
@@ -139,7 +144,7 @@ export const CBE = ({
             Fetching external file: {displayFileName}...
           </div>
           {lineRangeText && (
-            <div className="text-solarized-muted text-xs mt-1">
+            <div className="text-solarized-muted mt-1 text-xs">
               Lines: {lineRangeText}
             </div>
           )}
@@ -161,7 +166,7 @@ export const CBE = ({
             <span>curl -s {url}</span>
             {lineRangeText && (
               <span className="text-solarized-muted ml-2">
-                | sed -n '{startLine || 1},{endLine || '$'}p'
+                | sed -n &apos;{startLine || 1},{endLine || "$"}p&apos;
               </span>
             )}
           </div>
