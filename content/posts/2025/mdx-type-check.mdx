@@ -12,7 +12,10 @@ MDXなので、いくつかカスタムコンポーネントを作成および�
 
 例えば、次のスクショでは`Info`コンポーネントを利用しています。
 
-<Img src="/assets/images/posts/2025/mdx-type-check/no-error.png" alt="型チェック発生せず" />
+<Img
+  src="/assets/images/posts/2025/mdx-type-check/no-error.png"
+  alt="型チェック発生せず"
+/>
 
 しかし、これは必須の`message`プロパティを持っているので、必須プロパティのエラーと、オートコンプリートが表示されて欲しいところです。
 
@@ -64,8 +67,8 @@ TypeScriptではデフォルトでは`.ts`, `.tsx`などのような主要なフ
 </BQ>
 
 [公式](https://github.com/mdx-js/mdx-analyzer?tab=readme-ov-file#use)では上記の通り、
-デフォルトではタイプヒントは控えめと書かれておりわかるようなわからないようなといったところですが、
-実際にはこれを指定しないとMDXファイルで型チェックが行われません。
+デフォルトではタイプヒントは控えめと書かれております。
+わかるようなわからないようなといったところですが、実際にはこれを指定しないとMDXファイルで型チェックが行われません。
 TypeScriptを利用していて型チェックが行われてほしくない人はまあいないと思うので有効化しておきましょう。
 
 <Note message="この設定の反映はVSCodeを再起動する必要があります。" />
@@ -107,18 +110,24 @@ TypeScriptを利用していて型チェックが行われてほしくない人�
 import {type Planet} from './components.js'
 
 declare global {
-  interface MDXProvidedComponents {
-    Planet: typeof Planet
-  }
+interface MDXProvidedComponents {
+Planet: typeof Planet
 }
-  `}
+}
+`}
 />
 
 以上の設定を終えると、オートコンプリートや型チェックなどが行われるようになります。
 
-<Img src="/assets/images/posts/2025/mdx-type-check/with-error.png" alt="型チェック発生" />
+<Img
+  src="/assets/images/posts/2025/mdx-type-check/with-error.png"
+  alt="型チェック発生"
+/>
 
-<Img src="/assets/images/posts/2025/mdx-type-check/suggestion.png" alt="サジェスト" />
+<Img
+  src="/assets/images/posts/2025/mdx-type-check/suggestion.png"
+  alt="サジェスト"
+/>
 
 いくらか快適になりますね。
 
