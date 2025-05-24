@@ -1,0 +1,91 @@
+---
+title: "MDX + TypeScriptで型安全なブログ記事を書く"
+createdAt: "2025-05-24"
+tags:
+  - mdx
+  - typescript
+  - language-server
+---
+
+本ブログはMDX形式で記述した記事を`Next.js`を使ってSSGビルドして公開しています。
+MDXなので、いくつかカスタムコンポーネントを作成および利用していますが、MDXファイル中では型チェックやオートコンプリートが効かないことに課題を感じていました。
+
+例えば、次のスクショでは`Info`コンポーネントを利用しています。
+
+<Img src="/2025/mdx-type-check/no-error.png" alt="型チェック発生せず" />
+
+しかし、これは必須の`message`プロパティを持っているので、必須プロパティのエラーと、オートコンプリートが表示されて欲しいところです。
+
+面倒で対応をしばらく後回しにしていましたが、いくつかの調査や検証を経て先述の課題を解決できたので、本記事では設定方法やTipsを紹介します。
+なお、本記事の手順はエディタにはVSCodeを、またコンポーネントの実装言語に`TypeScript`を利用していることを前提にしています。
+
+## tl;dr
+
+以下を行って（順不同）、最後にVS Codeを再起動してください。
+
+- VS Codeの拡張`MDX（パッケージ名：unifiedjs.vscode-mdx）`をインストールする
+- `tsconfig.json`ファイルを修正する
+  - ルートに`"mdx": {"checkMdx": true}`を追加する
+  - `include`で`mdx`を指定する
+- コンポーネントの型を示す`types.ts`ファイルを作成する
+
+詳しく見ていきましょう。
+
+## MDX Language ServerとVSCodeの拡張
+
+基本的なコンセプトとして、前述の要件はMDXの言語サーバー（Language Server）を利用することで実現します。
+
+MDXの言語サーバーはすでに存在しており、[mdx-analyzer](https://github.com/mdx-js/mdx-analyzer#typescript)リポジトリで公開されています。
+このリポジトリはマルチパッケージ構成になっており、言語サーバーの実装と同じようにVSCodeの拡張が含まれています。
+
+また、このVSCodeの拡張パッケージのビルド時に、実は言語サーバーの実装を取り込むような構成になっています。
+よって、VSCode拡張のインストールのみでMDXの言語サーバーを利用することができます。
+
+<Note message="MDXのVS Code拡張は言語サーバーの提供以外にもシンタックスハイライトなども提供しています。" />
+
+## tsconfig.jsonの修正
+
+これで言語サーバーは利用可能になりました。
+しかし、言語サーバーが検証のソースとして利用するTypeScriptの設定について、`tsconfig.json`を修正する必要があります。
+
+### `include`で`mdx`を指定する
+
+TypeScriptではデフォルトでは`.ts`, `.tsx`などのような主要なファイルのみを検証対象にしています。
+今回機能の対象にしたいのは`.mdx`ファイルなので、これを`tsconfig.json`の`include`に追加します。
+
+### ルートに`"mdx": {"checkMdx": true}`を追加する
+
+次に、これは機能の実行に必須ではないですが事実上必須のオプションです。
+
+<BQ>
+  MDX type checking support is similar to JavaScript support. By default, type
+  hints are subtle. To enable strict type checking, you need to specify
+  mdx.checkMdx in tsconfig.json
+</BQ>
+
+[公式](https://github.com/mdx-js/mdx-analyzer?tab=readme-ov-file#use)では上記の通り、
+デフォルトではタイプヒントは控えめと書かれておりわかるようなわからないようなといったところですが、
+実際にはこれを指定しないとMDXファイルで型チェックが行われません。
+TypeScriptを利用していて型チェックが行われてほしくない人はまあいないと思うので有効化しておきましょう。
+
+<Note message="この設定の反映はVSCodeを再起動する必要があります。" />
+
+## types.tsファイルの作成
+
+最後に、コンポーネントの型を示す`types.ts`ファイルを作成します。
+このファイルが必要な理由はあんまりわかっていませんが、とりあえずこれを用意しないと型定義を読み取れていないような挙動をします。
+
+以上の設定を終えると、オートコンプリートや型チェックなどが行われるようになります。
+
+<Img src="/2025/mdx-type-check/with-error.png" alt="型チェック発生" />
+
+<Img src="/2025/mdx-type-check/suggestion.png" alt="サジェスト" />
+
+いくらか快適になりますね。
+
+## 設定方法の参考情報
+
+以上の設定までに紆余曲折ありましたが、最終的に一番参考になったのが公式レポジトリの[試験フィクスチャ](https://github.com/mdx-js/mdx-analyzer/tree/main/fixtures/provide)でした。
+これはVSCodeのプラグインの試験条件を設定している箇所で、これらの設定を行ったうえで同階層の`mdx`ファイルでサジェストイベントを発生させたらきちんとサジェストが表示されるよ、ということを確認するケースです。
+
+設定の実際の記述に迷ったらここを見てもらえばよいと思います。
