@@ -1,6 +1,7 @@
 import { ClassAttributes, HTMLAttributes, JSX } from "react";
 import { BQ } from "./BQ";
 import { CB } from "./CB";
+import { CBE } from "./CBE";
 import { 
   Info, 
   Tip, 
@@ -22,6 +23,7 @@ const MDXComponents = {
   Test,
   BQ, // BlockQuote
   CB, // CodeBlock
+  CBE, // CodeBlock External
   // Callouts
   Info,
   Tip,

@@ -7,6 +7,7 @@
 
 import type { BQ } from "./BQ";
 import type { CB } from "./CB";
+import type { CBE } from "./CBE";
 import type {
   Caution,
   Danger,
@@ -41,11 +42,23 @@ declare global {
 
     /**
      * カスタムコードブロックコンポーネント
-     * @param content - 表示するコード内容
+     * @param content - 表示するコード内容（filePathが指定されている場合は無視される）
      * @param lang - プログラミング言語（シンタックスハイライト用）
      * @param fileName - ファイル名（オプション、表示用）
+     * @param filePath - publicディレクトリからの相対パス（外部ファイルを読み込む場合）
      */
     CB: typeof CB;
+
+    /**
+     * 外部ファイル用カスタムコードブロックコンポーネント
+     * @param url - GitHubファイルのURL（blob URLでもraw URLでも対応）
+     * @param lang - プログラミング言語（シンタックスハイライト用）
+     * @param startLine - 開始行番号（1から開始、省略時は1行目から）
+     * @param endLine - 終了行番号（省略時は最終行まで）
+     * @param fileName - カスタムファイル名（省略時はURLから自動抽出）
+     * @param showLineNumbers - 行番号の表示（デフォルト: true）
+     */
+    CBE: typeof CBE;
 
     /**
      * 情報用コールアウト（青色）
