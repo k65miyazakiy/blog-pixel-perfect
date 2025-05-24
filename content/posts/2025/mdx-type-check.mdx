@@ -70,10 +70,49 @@ TypeScriptを利用していて型チェックが行われてほしくない人�
 
 <Note message="この設定の反映はVSCodeを再起動する必要があります。" />
 
+ここまでの設定を終えた`tsconfig.json`のサンプルは次の通りです。
+
+<CB
+  lang="json"
+  content={`
+{
+  "compilerOptions": {
+...
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "**/*.mdx" // 追加
+  ],
+  "exclude": ["node_modules"],
+  "mdx": {
+    "checkMdx": true // 追加
+  }
+}
+`}
+/>
+
 ## types.tsファイルの作成
 
 最後に、コンポーネントの型を示す`types.ts`ファイルを作成します。
 このファイルが必要な理由はあんまりわかっていませんが、とりあえずこれを用意しないと型定義を読み取れていないような挙動をします。
+
+例えば、`types.ts`の設定例は次のようになります。
+
+<CB 
+  lang='typescript'
+  content={`
+import {type Planet} from './components.js'
+
+declare global {
+  interface MDXProvidedComponents {
+    Planet: typeof Planet
+  }
+}
+  `}
+/>
 
 以上の設定を終えると、オートコンプリートや型チェックなどが行われるようになります。
 
@@ -85,7 +124,7 @@ TypeScriptを利用していて型チェックが行われてほしくない人�
 
 ## 設定方法の参考情報
 
-以上の設定までに紆余曲折ありましたが、最終的に一番参考になったのが公式レポジトリの[試験フィクスチャ](https://github.com/mdx-js/mdx-analyzer/tree/main/fixtures/provide)でした。
+以上の設定までに紆余曲折ありましたが、最終的に一番参考になったのが公式レポジトリの[試験フィクスチャ](https://github.com/mdx-js/mdx-analyzer/tree/main/fixtures/provide)でした。（先のtypesのサンプルもここから持ってきています）
 これはVSCodeのプラグインの試験条件を設定している箇所で、これらの設定を行ったうえで同階層の`mdx`ファイルでサジェストイベントを発生させたらきちんとサジェストが表示されるよ、ということを確認するケースです。
 
 設定の実際の記述に迷ったらここを見てもらえばよいと思います。
