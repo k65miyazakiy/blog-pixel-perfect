@@ -41,9 +41,10 @@ declare global {
 
     /**
      * カスタムコードブロックコンポーネント
-     * @param content - 表示するコード内容
+     * @param content - 表示するコード内容（filePathが指定されている場合は無視される）
      * @param lang - プログラミング言語（シンタックスハイライト用）
      * @param fileName - ファイル名（オプション、表示用）
+     * @param filePath - publicディレクトリからの相対パス（外部ファイルを読み込む場合）
      */
     CB: typeof CB;
 
