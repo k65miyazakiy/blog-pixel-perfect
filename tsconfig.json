@@ -30,7 +30,7 @@
     "**/*.mdx",
     "public/assets/code/snippets/2025/mdx-type-check.mdx/Planet.txg"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "public"],
   "mdx": {
     "checkMdx": true
   }
