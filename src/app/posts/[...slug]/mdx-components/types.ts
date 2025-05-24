@@ -22,20 +22,7 @@ import type { Test } from "./Test";
 
 declare global {
   /**
-   * MDXファイル内で利用可能なカスタムコンポーネントの型定義
-   *
-   * 使用例:
-   * ```mdx
-   * <BQ source="Example Source" author="John Doe">
-   *   This is a custom blockquote
-   * </BQ>
-   *
-   * <CB content="console.log('Hello World')" lang="javascript" fileName="example.js" />
-   *
-   * <Info message="This is an informational callout" />
-   *
-   * <Img src="/path/to/image.jpg" alt="Description" />
-   * ```
+   * MDXファイル内で利用可能なカスタムコンポーネントの型定義。
    */
   interface MDXProvidedComponents {
     /**
