@@ -43,7 +43,7 @@ export default function About() {
               <div className="relative h-24 w-24 flex-shrink-0">
                 <div className="border-solarized-muted rounded border p-1">
                   <img
-                    src="/avator_rm.png"
+                    src="/assets/images/common/avatar.png"
                     alt="プロフィール画像"
                     width={88}
                     height={88}

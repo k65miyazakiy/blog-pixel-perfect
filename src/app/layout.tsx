@@ -5,13 +5,16 @@ import "./globals.css";
 import "./lib/fontawesome";
 
 import { JetBrains_Mono } from "next/font/google";
-const JetBrainsMono = JetBrains_Mono({ weight: ["400", "500", "600"], subsets: ["latin"] });
+const JetBrainsMono = JetBrains_Mono({
+  weight: ["400", "500", "600"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Pixel Perfect",
   description: "A technical blog about web development and more",
   icons: {
-    icon: "/pixel-p-modified.svg",
+    icon: "/assets/images/common/logo.svg",
   },
 };
 
@@ -23,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <link rel="icon" href="/pixel-p-modified.svg" type="image/svg+xml" />
+        <link
+          rel="icon"
+          href="/assets/images/common/logo.svg"
+          type="image/svg+xml"
+        />
       </head>
       <body className={JetBrainsMono.className}>
         <div id="flex-container" className="flex min-h-screen flex-col">

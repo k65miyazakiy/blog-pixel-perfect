@@ -59,7 +59,7 @@ Cloud Runは、Google Cloudが提供するフルマネージドなコンテナ�
 
 これは画面を見たら一発でわかります。
 
-<Img src="/2025/cloud-run-deploy-strategy/revisions.png" alt="リビジョン一覧" />
+<Img src="/assets/images/posts/2025/cloud-run-deploy-strategy/revisions.png" alt="リビジョン一覧" />
 
 リビジョンごとにトラフィックの割合を設定することが可能なことが分かります。
 Cloud Runではサービス単位にメインとなるURLを持ち、そのURLへのアクセスはここで設定した割合に従って各リビジョンに振り分けられます。
@@ -67,7 +67,7 @@ Cloud Runではサービス単位にメインとなるURLを持ち、そのURL�
 **トラフィックを管理**リンクよりトラフィックの割合変更をGUIで簡単に行うことが出来ます。
 
 <Img
-  src="/2025/cloud-run-deploy-strategy/change_traffic.png"
+  src="/assets/images/posts/2025/cloud-run-deploy-strategy/change_traffic.png"
   alt="リビジョン一覧"
 />
 
@@ -81,7 +81,7 @@ Cloud Runではサービス単位にメインとなるURLを持ち、そのURL�
 Cloud Runではデプロイオプションとして新規リビジョンにトラフィックを振り分けないオプションがあります。（というより振り分けないがデフォルト）
 
 <Img
-  src="/2025/cloud-run-deploy-strategy/deploy_with_no_traffic.png"
+  src="/assets/images/posts/2025/cloud-run-deploy-strategy/deploy_with_no_traffic.png"
   alt="リビジョン一覧"
 />
 
@@ -94,13 +94,13 @@ Cloud Runではデプロイオプションとして新規リビジョンにト�
 
 ここで`Cloud Run`のリビジョンの機能である**タグ**を利用します。
 
-<Img src="/2025/cloud-run-deploy-strategy/tagging.png" alt="リビジョン一覧" />
+<Img src="/assets/images/posts/2025/cloud-run-deploy-strategy/tagging.png" alt="リビジョン一覧" />
 
 **リビジョンにはタグを付与することででき、このタグに対してメインのURLとは別にタグ固有のURLが割り当てられます**。
 メインのURLは設定したトラフィック割合にしたがって各リビジョンに振り分けられますが、タグ固有のURLはトラフィック割合に関係なく、指定したリビジョンに直接アクセスすることが出来ます。
 
 <Img
-  src="/2025/cloud-run-deploy-strategy/url_of_tag.png"
+  src="/assets/images/posts/2025/cloud-run-deploy-strategy/url_of_tag.png"
   alt="リビジョン一覧"
 />
 

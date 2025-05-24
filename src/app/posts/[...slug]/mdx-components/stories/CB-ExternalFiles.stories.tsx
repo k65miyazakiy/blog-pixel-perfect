@@ -31,21 +31,21 @@ type Story = StoryObj<typeof meta>;
 export const FactorialJavaScript: Story = {
   args: {
     lang: 'javascript',
-    filePath: 'code-snippets/factorial.js',
+    filePath: 'assets/code/snippets/factorial.js',
   },
 };
 
 export const UserServiceTypeScript: Story = {
   args: {
     lang: 'typescript',
-    filePath: 'code-snippets/user-service.ts',
+    filePath: 'assets/code/snippets/user-service.ts',
   },
 };
 
 export const TodoListReact: Story = {
   args: {
     lang: 'jsx',
-    filePath: 'code-snippets/todo-list.tsx',
+    filePath: 'assets/code/snippets/todo-list.tsx',
     fileName: 'TodoList.tsx',
   },
 };
@@ -53,7 +53,7 @@ export const TodoListReact: Story = {
 export const WithCustomFileName: Story = {
   args: {
     lang: 'typescript',
-    filePath: 'code-snippets/user-service.ts',
+    filePath: 'assets/code/snippets/user-service.ts',
     fileName: 'CustomUserService.ts',
   },
 };
@@ -62,7 +62,7 @@ export const WithCustomFileName: Story = {
 export const FileNotFound: Story = {
   args: {
     lang: 'javascript',
-    filePath: 'code-snippets/non-existent-file.js',
+    filePath: 'assets/code/snippets/non-existent-file.js',
   },
 };
 
@@ -103,7 +103,7 @@ export const ComparisonWithInline: Story = {
         <h3 className="text-lg font-bold mb-2">外部ファイルから読み込み</h3>
         <CB 
           lang="javascript"
-          filePath="code-snippets/factorial.js"
+          filePath="assets/code/snippets/factorial.js"
         />
       </div>
     </div>
@@ -117,17 +117,17 @@ export const AllExternalFiles: Story = {
       
       <div>
         <h4 className="font-semibold">JavaScript</h4>
-        <CB lang="javascript" filePath="code-snippets/factorial.js" />
+        <CB lang="javascript" filePath="assets/code/snippets/factorial.js" />
       </div>
       
       <div>
         <h4 className="font-semibold">TypeScript</h4>
-        <CB lang="typescript" filePath="code-snippets/user-service.ts" />
+        <CB lang="typescript" filePath="assets/code/snippets/user-service.ts" />
       </div>
       
       <div>
         <h4 className="font-semibold">React Component</h4>
-        <CB lang="jsx" filePath="code-snippets/todo-list.tsx" fileName="TodoList.tsx" />
+        <CB lang="jsx" filePath="assets/code/snippets/todo-list.tsx" fileName="TodoList.tsx" />
       </div>
     </div>
   ),
