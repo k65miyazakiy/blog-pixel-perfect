@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // ...
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "**/*.mdx", // 追加
+    "Planet.txg"
+  ],
+  "exclude": ["node_modules"],
+  "mdx": {
+    "checkMdx": true // 追加
+  }
+}

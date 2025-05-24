@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "**/*.mdx"
+    "**/*.mdx",
+    "public/assets/code/snippets/2025/mdx-type-check.mdx/Planet.txg"
   ],
   "exclude": ["node_modules"],
   "mdx": {

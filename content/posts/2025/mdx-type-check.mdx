@@ -77,24 +77,8 @@ TypeScriptを利用していて型チェックが行われてほしくない人�
 
 <CB
   lang="json"
-  content={`
-{
-  "compilerOptions": {
-...
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "**/*.mdx" // 追加
-  ],
-  "exclude": ["node_modules"],
-  "mdx": {
-    "checkMdx": true // 追加
-  }
-}
-`}
+  fileName="tsconfig.json"
+  filePath="/assets/code/snippets/2025/mdx-type-check.mdx/tsconfig.json.txt"
 />
 
 ## types.tsファイルの作成
@@ -104,17 +88,10 @@ TypeScriptを利用していて型チェックが行われてほしくない人�
 
 例えば、`types.ts`の設定例は次のようになります。
 
-<CB 
-  lang='typescript'
-  content={`
-import {type Planet} from './components.js'
-
-declare global {
-interface MDXProvidedComponents {
-Planet: typeof Planet
-}
-}
-`}
+<CB
+  lang="typescript"
+  fileName="types.ts"
+  filePath="/assets/code/snippets/2025/mdx-type-check.mdx/types.ts.txt"
 />
 
 以上の設定を終えると、オートコンプリートや型チェックなどが行われるようになります。
