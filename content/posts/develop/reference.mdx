@@ -132,25 +132,25 @@ const veryLongVariableName = "This is a very long string that should trigger hor
 
 // 関数の定義も長いパラメータリストでテスト
 function processUserDataWithVeryLongParameterNames(userFirstName, userLastName, userEmailAddress, userPhoneNumber, userAddress, userDateOfBirth, userPreferences) {
-    // 長いチェーンメソッドでのテスト
-    return userFirstName.trim().toLowerCase().replace(/\\s+/g, '-') + '@' + userEmailAddress.split('@')[1].toLowerCase().replace(/[^a-z0-9.-]/g, '') + '.processed';
+// 長いチェーンメソッドでのテスト
+return userFirstName.trim().toLowerCase().replace(/\\s+/g, '-') + '@' + userEmailAddress.split('@')[1].toLowerCase().replace(/[^a-z0-9.-]/g, '') + '.processed';
 }
 
 // 長いオブジェクトの定義
 const configurationObject = {
-    apiEndpoint: "https://api.example.com/v1/users/profile/detailed-information-with-extended-metadata",
-    authentication: {
-        tokenType: "Bearer",
-        refreshTokenEndpoint: "https://auth.example.com/oauth/token/refresh/with-extended-scope"
-    },
-    requestOptions: {
-        timeout: 30000,
-        retries: 3,
-        headers: {
-            "Content-Type": "application/json",
-            "User-Agent": "MyApp/1.0 (https://myapp.example.com; contact@myapp.example.com)"
-        }
-    }
+apiEndpoint: "https://api.example.com/v1/users/profile/detailed-information-with-extended-metadata",
+authentication: {
+tokenType: "Bearer",
+refreshTokenEndpoint: "https://auth.example.com/oauth/token/refresh/with-extended-scope"
+},
+requestOptions: {
+timeout: 30000,
+retries: 3,
+headers: {
+"Content-Type": "application/json",
+"User-Agent": "MyApp/1.0 (https://myapp.example.com; contact@myapp.example.com)"
+}
+}
 };
 
 // コメントも意図的に長くして、横スクロールが必要な状況を作っています。このような状況でも適切に表示されることを確認します。`}
@@ -169,21 +169,21 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Union, Tuple
 
 def process_complex_data_analysis_with_multiple_parameters_and_long_function_name(
-    input_dataframe: pd.DataFrame,
-    target_columns: List[str],
-    aggregation_methods: Dict[str, str],
-    filter_conditions: Optional[Dict[str, Union[str, int, float]]] = None,
-    date_range_start: Optional[datetime] = None,
-    date_range_end: Optional[datetime] = None,
-    include_statistical_summary: bool = True,
-    export_to_csv: bool = False,
-    output_file_path: Optional[str] = None
+input_dataframe: pd.DataFrame,
+target_columns: List[str],
+aggregation_methods: Dict[str, str],
+filter_conditions: Optional[Dict[str, Union[str, int, float]]] = None,
+date_range_start: Optional[datetime] = None,
+date_range_end: Optional[datetime] = None,
+include_statistical_summary: bool = True,
+export_to_csv: bool = False,
+output_file_path: Optional[str] = None
 ) -> Tuple[pd.DataFrame, Dict[str, float]]:
-    """
-    この関数は非常に長いパラメータリストと複雑な処理を含むデータ分析コードの例です。
-    横スクロールのテストや長い行の表示テストに使用します。
-    """
-    
+"""
+この関数は非常に長いパラメータリストと複雑な処理を含むデータ分析コードの例です。
+横スクロールのテストや長い行の表示テストに使用します。
+"""
+
     # 長い辞書内包表記の例
     analysis_results = {
         'total_records_processed': len(input_dataframe),
@@ -192,9 +192,10 @@ def process_complex_data_analysis_with_multiple_parameters_and_long_function_nam
         'data_quality_score_based_on_completeness_and_accuracy': 0.0,
         'statistical_significance_p_value_for_hypothesis_testing': 0.05
     }
-    
+
     # 長いメソッドチェーンの例
     processed_data = input_dataframe.copy().dropna().reset_index(drop=True).groupby('category').agg(aggregation_methods).round(2).sort_values(by='value', ascending=False)
-    
+
     return processed_data, analysis_results`}
+
 />
