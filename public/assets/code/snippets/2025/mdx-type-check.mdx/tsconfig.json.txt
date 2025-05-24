@@ -8,7 +8,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "**/*.mdx", // 追加
-    "Planet.txg"
   ],
   "exclude": ["node_modules"],
   "mdx": {
