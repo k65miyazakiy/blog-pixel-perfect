@@ -35,13 +35,6 @@
     "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "^8.6.14",
-    "@storybook/addon-interactions": "^8.6.14",
-    "@storybook/addon-onboarding": "^8.6.14",
-    "@storybook/blocks": "^8.6.14",
-    "@storybook/nextjs": "^8.6.14",
-    "@storybook/react": "^8.6.14",
-    "@storybook/test": "^8.6.14",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^22",
     "@types/react": "^19",
@@ -49,12 +42,10 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "eslint": "^9",
     "eslint-config-next": "16.0.7",
-    "eslint-plugin-storybook": "^0.12.0",
     "postcss": "^8",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "serve": "^14.2.4",
-    "storybook": "^8.6.14",
     "tailwindcss": "^4.1.4",
     "typescript": "^5"
   }

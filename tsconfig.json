@@ -39,7 +39,10 @@
   "exclude": [
     "node_modules",
     "public",
-    "out"
+    "out",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    ".storybook"
   ],
   "mdx": {
     "checkMdx": true
