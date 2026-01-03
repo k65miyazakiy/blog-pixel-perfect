@@ -1,6 +1,6 @@
 ---
 title: "令和8年のオブザーバビリティとLLM"
-createdAt: "2026-01-02"
+createdAt: "2026-01-03"
 tags:
   - tech
   - googlecloud
@@ -57,89 +57,30 @@ type: "techtips"
 スパンにせよイベントにせよ、OTEL自体の仕組みを大きく変えるものではなく、あくまで「生成AI呼び出しを表現するための属性セットが定義された」という形になります。
 この点を抑えると、次は「各種計装がこの属性に対応しているか」、および「OTELバックエンドがこれらの属性を活用できるか」という点が重要になってきます。
 
-それぞれ簡単に見ていきましょう。まずはクライアントライブラリの計装状況についてです。
+それぞれ簡単に見ていきましょう。まずは生成AIのクライアントライブラリの計装状況についてです。
 
-## 各種ライブラリの対応状況
+## 生成AIクライアントライブラリの対応状況
 
-生成AIライブラリをライブラリをここでは主に2つに分けて見ていきます。
+この部分はYESともNOとも言いづらいところが現状です。数多ある計装を調べるのが面倒だったとも言います。
 
-1. AIモデルプロバイダーが提供しているライブラリ
-2. 生成AIライブラリ
+ポイントは2つです。
 
-### AIモデルプロパイダーが提供しているライブラリの計装状況について
+1. 利用しているAIモデルもしくはラッパーライブラリがそもそも計装を提供しているか
+2. その計装がOTELの生成AIセマンティクスに準拠しているか
 
-OpenAIやGoogle, Anthropicなど主要なモデルプロバイダーに対して直接APIコールを行うためのライブラリが計装済みか、という点です。
+1に関していうと、おそらく概ねはYESの状況にあると思います。OpenTelemetry公式の計装に加えて、サードパーティ製の計装ライブラリもあるからです。
 
-#### 結論：概ねYES
-
-主要なモデルプロバイダー（OpenAI、Anthropic、Google）については、OpenTelemetry計装が利用可能です。
-実用上、自分の利用するライブラリの計装があるかどうかが重要なポイントになるため、それがあればOKという判断で良いでしょう。
-
-#### 言語による対応状況の違い
-
-**Python: 充実している**
-
-公式のOpenTelemetryコントリビューションリポジトリで主要プロバイダーの計装が提供されています。
-[opentelemetry-python-contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation-genai)を見ると、`anthropic`, `google-genai`, `openai`と主要なモデルプロバイダーの計装ライブラリが確認できます。
-
-**JavaScript/TypeScript: Pythonほど充実していない**
-
-[opentelemetry-js-contrib](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages)では、`openai`の計装はあるものの、`google-genai`や`anthropic`の公式計装は見当たりません。
-ただし、これはJSのエージェントライブラリエコシステム自体がPythonに比べて小規模である点も関係していると考えられます。
-
-#### サードパーティソリューションの存在
-
-公式のOpenTelemetry計装に加えて、サードパーティのソリューションも充実しています。
-
-**OpenLLMetry (Traceloop)**
-
-[Pythonライブラリ](https://github.com/traceloop/openllmetry/tree/main/packages)および[JavaScriptライブラリ](https://github.com/traceloop/openllmetry-js/tree/main/packages)では、主要なモデルプロバイダーに加えて多くのエージェントライブラリでも計装が提供されています。
-ただし、JavaScriptライブラリはPythonライブラリの半分程度のパッケージ数となっています。
-
-**OpenInference (Arize)**
-
-[OpenInference](https://github.com/Arize-ai/openinference)では、OpenAI SDK、Anthropic SDK、Google GenAIなどの計装を提供しています。
-ただし、OpenInferenceは独自のSemantic Conventionsを使用しており、OpenTelemetryの公式Gen-AI Conventionsとは異なる属性名を使用している点に注意が必要です。
-
-#### Semantic Conventionsへの準拠について
-
-計装ライブラリが存在するだけでは不十分で、**OpenTelemetry Semantic Conventionsに準拠している**ことが相互運用性の観点から重要です。
-
-**OpenTelemetry公式Gen-AI Conventions**
-
-OpenTelemetryは[Gen-AI用のSemantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)を定義しており、`gen_ai.*`プレフィックスの属性を使用しています。
-ただし、現時点ではまだExperimental（実験的）ステータスです。
-
-**準拠状況の違い**
-
-- **OpenLLMetry**: OpenTelemetry公式のGen-AI Conventionsに準拠しており、[OpenLLMetryのSemantic ConventionsはOpenTelemetryの公式仕様に統合されています](https://community.dynatrace.com/t5/AI-Observability/OpenLLMetry-semantic-conventions-are-now-part-of-OpenTelemetry/m-p/267984)
-- **OpenInference**: [独自のSemantic Conventions](https://arize-ai.github.io/openinference/spec/semantic_conventions.html)を使用（例: `openinference.span.kind`, `llm.input_messages`など）。OpenTelemetry形式でのデータ送信は可能ですが、属性名が公式仕様と異なるため、バックエンドによっては解釈が変わる可能性があります
-
-この違いは、将来的にバックエンドを切り替える際や、異なるツール間でデータを共有する際に影響する可能性があるため、選択時に考慮すべき点です。
-
-### 生成AIライブラリにおける計装状況について
-
-実際のところモデルプロパイダーの提供するライブラリを直接利用するよりも、それをラップするような生成AIライブラリを利用するケースも多いと思います。
-というのも代表的なところで言うと
-
-1. 単一モデルプロパイダーへの依存の回避
-2. 構造化応答の言語オブジェクト型へのマッピング
-3. ワークフローを定義するための制御機構、APIの提供
-4. エラーハンドリング、リトライ機構など
-
-などの利点が考えられるためです。
-
-では、実際にAIライブラリはOTELの計装に対応しているのか、かと言われれば「現状では期待値は半々」、というのが印象です。
-
-Vercelの[AI SDK](https://ai-sdk.dev/docs/ai-sdk-core/telemetry)です。
-
+どちらかといえば問題は2の方で、計装はあってもOTELの生成AIセマンティクスに準拠していない、というケースは十分に考えられます。
+例としてVercelの[AI SDK](https://ai-sdk.dev/docs/ai-sdk-core/telemetry)がありますが、こちらはOTELのスパンやイベントを生成するものの、生成AIセマンティクスには準拠していません。
+具体的には、ページ下部に計装する際の属性が記載されていますが（この用意があるだけでも上澄みだと思っています）、`ai.*`プレフィックスであり、OTELの`gen_ai.*`プレフィックスとは異なっています。
 
 ## OTELバックエンドの対応状況
 
+生成AIライブラリの計装の反対側にはOTELデータの格納・処理先があります。
 スパンやイベントなどがOTEL標準に従っていても、結局それを活用するにはOTELバックエンド側の対応も必要です。
-というのも、前述の通り、AI対応のOTELは単純にある属性が付与されたOTELスパンやイベントなので。
+というのも、結局のところAI対応のOTELテレメトリというものは、既定の属性が付与されたOTELスパンやイベントに過ぎないからです。
 
-調査の結果、主要なクラウドプロバイダーではいずれもOTEL対応のオブザーバビリティツールを提供しているようです。
+結論から言うと、主要なクラウドプロバイダーではいずれもOTEL対応のオブザーバビリティツールを提供しているようです。
 
 ### Google Cloud Trace
 
