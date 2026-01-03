@@ -11,9 +11,9 @@ type: "techtips"
 
 ## TL;DR
 
-* 2026年頭現在、OpenTelemetryでは生成AIに関する仕様が開発中のステータスで、スパンとイベントの形で定義されている
-* OTELの計装ライブラリの対応状況はまちまちで、まだ個別にライブラリの対応・実装状況を確認する必要がある
-* OTELバックエンド側を見ると、主要なクラウドプロバイダーのOTELバックエンドは生成AIセマンティクスに対応している
+* 2026年頭現在、OpenTelemetry（以下OTEL）では生成AIに関するSemantic Conventionsが開発中で、スパン、イベント、メトリクスの形で定義されている
+* 生成AIライブラリ側では、計装ライブラリの有無および、OTEL Gen-AI Semantic Conventionsへの準拠状況はまちまちで、個別に確認が必要
+* OTELバックエンド側では、主要なクラウドプロバイダー（GCP、Azure、AWS）が生成AI向けのSemantic Conventionsに対応している
 
 ## はじめに
 
@@ -28,11 +28,13 @@ type: "techtips"
 ## OpenTelemetry の生成AIにおける仕様
 
 生成AIのオブザーバビリティに関して、OTELでは主に2つのSemantic Conventionの標準化が行われています。
-[スパン](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/)、[イベント](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/)です。
+[スパン](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/)、
+[イベント](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/)、および
+[メトリクス](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-metrics/)です。
 
 ### スパン
 
-スパンにはいろいろ定義されていますが、特にベーシックな[スパン](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/)は`
+スパンにはいろいろ定義されていますが、特にベーシックな[スパン](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/)については次のような記述があります。
 
 > represents a client call to Generative AI model or service that generates a response or requests a tool call based on the input prompt.
 > (入力プロンプトに基づいて応答を生成するかツール呼び出しを要求する生成AIモデルやサービスへのクライアントの呼び出し)
@@ -51,11 +53,19 @@ type: "techtips"
 > （チャット履歴やパラメータのような、生成AIモデルへのリクエストの詳細を記述する）
 
 とされています。
+これもスパン同様にある属性セットを持つイベントが生成AIリクエストのものとして取り扱われるようになる、ということを意図しています。
+
+### メトリクス
+
+[メトリクス](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-metrics/)では、トークン使用量やレイテンシなどの定量的な指標が定義されています。
+
+一方で振り返ればトークン使用料などはスパンでも（Recommendedではありますが）定義されており、ヒストグラムとして丸められるメトリクスでどこまで取得するべきか、は考えどころかもしれません。
+メトリクスのメリット（ストレージ効率や計算容易性、既存のデータ分析プラットフォームへの乗せやすさ）を加味することになるでしょう。
 
 ### まとめると
 
 スパンにせよイベントにせよ、OTEL自体の仕組みを大きく変えるものではなく、あくまで「生成AI呼び出しを表現するための属性セットが定義された」という形になります。
-この点を抑えると、次は「各種計装がこの属性に対応しているか」、および「OTELバックエンドがこれらの属性を活用できるか」という点が重要になってきます。
+この点を押さえると、次は「各種計装がこの属性に対応しているか」、および「OTELバックエンドがこれらの属性を活用できるか」という点が重要になってきます。
 
 それぞれ簡単に見ていきましょう。まずは生成AIのクライアントライブラリの計装状況についてです。
 
@@ -70,7 +80,10 @@ type: "techtips"
 
 1に関していうと、おそらく概ねはYESの状況にあると思います。OpenTelemetry公式の計装に加えて、サードパーティ製の計装ライブラリもあるからです。
 
-どちらかといえば問題は2の方で、計装はあってもOTELの生成AIセマンティクスに準拠していない、というケースは十分に考えられます。
+どちらかといえば問題は2の方で、計装はあってもOTEL Gen-AI Semantic Conventionsに準拠していない、というケースは十分に考えられます。
+
+**Semantic Conventions非準拠の例**
+
 例としてVercelの[AI SDK](https://ai-sdk.dev/docs/ai-sdk-core/telemetry)がありますが、こちらはOTELのスパンやイベントを生成するものの、生成AIセマンティクスには準拠していません。
 具体的には、ページ下部に計装する際の属性が記載されていますが（この用意があるだけでも上澄みだと思っています）、`ai.*`プレフィックスであり、OTELの`gen_ai.*`プレフィックスとは異なっています。
 
@@ -94,7 +107,10 @@ type: "techtips"
 最近一番利用しているのがCloud Traceなので、実際に手動計装してみた例を表示します。
 Cloud Trace上では恐らくイベントを特別に抽出してビューを構築しているものと思われます。
 
-TODO
+<Img src="/assets/images/posts/2026/reiwa-8-otel-ai/span-ai-preview.jpg" alt="Cloud Trace上の生成AIスパンの表示例" />
+<Img src="/assets/images/posts/2026/reiwa-8-otel-ai/event-ai.jpg" alt="Cloud Trace上の生成AIイベントの表示例" />
+
+LangFuseのようなそれ用に設計されたものと比べるとどうしても現在のビューが特別見やすいとは言い難いですが、生成AIイベントを特別に表現していることがわかります。
 
 ### Azure Application Insights
 
@@ -111,3 +127,11 @@ Amazon CloudWatchでも、[Launching Amazon CloudWatch generative AI observabili
 
 ## おわりに
 
+ざっくり状況を
+
+1. 標準：Developmentの状況ではあるが、OTEL Gen-AI Semantic Conventionsが定義されている
+2. 計装ライブラリ：計装ライブラリは存在するが、OTEL Gen-AI Semantic Conventionsへの準拠状況はまちまち
+3. OTELバックエンド：主要クラウドプロバイダーのOTELバックエンドは対応している
+
+という形でしょうか。バックエンドが対応の一歩先を行っており、計装ライブラリが追いついていない印象です。
+今年は必要であれば手動計装を行いながら、計装ライブラリの対応状況をウォッチしていくことになりそうです。
