@@ -27,7 +27,7 @@ type: "techtips"
 
 ## OpenTelemetry の生成AIにおける仕様
 
-生成AIのオブザーバビリティに関して、OTELでは主に2つのSemantic Conventionの標準化が行われています。
+生成AIのオブザーバビリティに関して、OTELでは主に3つのSemantic Conventionの標準化が行われています。
 [スパン](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-spans/)、
 [イベント](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-events/)、および
 [メトリクス](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-metrics/)です。
@@ -59,7 +59,7 @@ type: "techtips"
 
 [メトリクス](https://opentelemetry.io/docs/specs/semconv/gen-ai/gen-ai-metrics/)では、トークン使用量やレイテンシなどの定量的な指標が定義されています。
 
-一方で振り返ればトークン使用料などはスパンでも（Recommendedではありますが）定義されており、ヒストグラムとして丸められるメトリクスでどこまで取得するべきか、は考えどころかもしれません。
+一方で振り返ればトークン使用量などはスパンでも（Recommendedではありますが）定義されており、ヒストグラムとして丸められるメトリクスでどこまで取得するべきか、は考えどころかもしれません。
 メトリクスのメリット（ストレージ効率や計算容易性、既存のデータ分析プラットフォームへの乗せやすさ）を加味することになるでしょう。
 
 ### まとめると
@@ -71,12 +71,12 @@ type: "techtips"
 
 ## 生成AIクライアントライブラリの対応状況
 
-この部分はYESともNOとも言いづらいところが現状です。数多ある計装を調べるのが面倒だったとも言います。
+この部分はYESともNOとも言いづらいところが現状です。計装ライブラリの対応状況は多岐にわたり、個別の確認が必要な状況です。
 
 ポイントは2つです。
 
 1. 利用しているAIモデルもしくはラッパーライブラリがそもそも計装を提供しているか
-2. その計装がOTELの生成AIセマンティクスに準拠しているか
+2. その計装がOTEL Gen-AI Semantic Conventionsに準拠しているか
 
 1に関していうと、おそらく概ねはYESの状況にあると思います。OpenTelemetry公式の計装に加えて、サードパーティ製の計装ライブラリもあるからです。
 
@@ -84,7 +84,7 @@ type: "techtips"
 
 **Semantic Conventions非準拠の例**
 
-例としてVercelの[AI SDK](https://ai-sdk.dev/docs/ai-sdk-core/telemetry)がありますが、こちらはOTELのスパンやイベントを生成するものの、生成AIセマンティクスには準拠していません。
+例としてVercelの[AI SDK](https://ai-sdk.dev/docs/ai-sdk-core/telemetry)がありますが、こちらはOTELのスパンやイベントを生成するものの、OTEL Gen-AI Semantic Conventionsには準拠していません。
 具体的には、ページ下部に計装する際の属性が記載されていますが（この用意があるだけでも上澄みだと思っています）、`ai.*`プレフィックスであり、OTELの`gen_ai.*`プレフィックスとは異なっています。
 
 ## OTELバックエンドの対応状況
@@ -127,9 +127,9 @@ Amazon CloudWatchでも、[Launching Amazon CloudWatch generative AI observabili
 
 ## おわりに
 
-ざっくり状況を
+ざっくりと状況をまとめると、以下のようになります。
 
-1. 標準：Developmentの状況ではあるが、OTEL Gen-AI Semantic Conventionsが定義されている
+1. 標準：実験的（Experimental）ステータスではあるが、OTEL Gen-AI Semantic Conventionsが定義されている
 2. 計装ライブラリ：計装ライブラリは存在するが、OTEL Gen-AI Semantic Conventionsへの準拠状況はまちまち
 3. OTELバックエンド：主要クラウドプロバイダーのOTELバックエンドは対応している
 
