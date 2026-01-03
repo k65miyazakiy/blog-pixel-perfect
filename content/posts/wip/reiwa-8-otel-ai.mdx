@@ -70,18 +70,52 @@ type: "techtips"
 
 OpenAIやGoogle, Anthropicなど主要なモデルプロバイダーに対して直接APIコールを行うためのライブラリが計装済みか、という点です。
 
-Pythonについてはそこそこの数の計装が行われている状況のようです。
-実際に[opentelemetry-python-contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation-genai)を見ると、`anthropic`, `google-genai`, `openai`と主要なモデルプロパイダーの計装ライブラリがあることを確認できます。
+#### 結論：概ねYES
 
-また、[traceloopの計装ライブラリ](https://github.com/traceloop/openllmetry/tree/main/packages)を見ると主要なモデルプロパイダー含め多くのエージェントライブラリでも計装が行われていることがわかります。
+主要なモデルプロバイダー（OpenAI、Anthropic、Google）については、OpenTelemetry計装が利用可能です。
+実用上、自分の利用するライブラリの計装があるかどうかが重要なポイントになるため、それがあればOKという判断で良いでしょう。
 
-一方JSについてはある程度の計装は進んでいるものの、Pythonほぼのような充実ぶりではないという印象です。
-[opentelemetry-js-contrib](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages)のパッケージは横並びになっているので目grepがしんどいところですが、`openai`はあるものの`google-genai`や`anthropic`は見当たりません。
+#### 言語による対応状況の違い
 
-[traceloopのJSライブラリ](https://github.com/traceloop/openllmetry-js/tree/main/packages)についても同様で、おおよそPythonライブラリの半分程度の数しか見当たらない状況です。
-しかし、これはそもそものJSのエージェントライブラリの数がPythonに比べてどうか、というところも関係してくると思われるので一概に対応が進んでいない、とは言い切れないかもしれません。
+**Python: 充実している**
 
-実用上、自分の利用するライブラリの計装があるかどうかが重要なポイントになると思うので、それがあればOK、といった判断で良いかと思います。
+公式のOpenTelemetryコントリビューションリポジトリで主要プロバイダーの計装が提供されています。
+[opentelemetry-python-contrib](https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation-genai)を見ると、`anthropic`, `google-genai`, `openai`と主要なモデルプロバイダーの計装ライブラリが確認できます。
+
+**JavaScript/TypeScript: Pythonほど充実していない**
+
+[opentelemetry-js-contrib](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/packages)では、`openai`の計装はあるものの、`google-genai`や`anthropic`の公式計装は見当たりません。
+ただし、これはJSのエージェントライブラリエコシステム自体がPythonに比べて小規模である点も関係していると考えられます。
+
+#### サードパーティソリューションの存在
+
+公式のOpenTelemetry計装に加えて、サードパーティのソリューションも充実しています。
+
+**OpenLLMetry (Traceloop)**
+
+[Pythonライブラリ](https://github.com/traceloop/openllmetry/tree/main/packages)および[JavaScriptライブラリ](https://github.com/traceloop/openllmetry-js/tree/main/packages)では、主要なモデルプロバイダーに加えて多くのエージェントライブラリでも計装が提供されています。
+ただし、JavaScriptライブラリはPythonライブラリの半分程度のパッケージ数となっています。
+
+**OpenInference (Arize)**
+
+[OpenInference](https://github.com/Arize-ai/openinference)では、OpenAI SDK、Anthropic SDK、Google GenAIなどの計装を提供しています。
+ただし、OpenInferenceは独自のSemantic Conventionsを使用しており、OpenTelemetryの公式Gen-AI Conventionsとは異なる属性名を使用している点に注意が必要です。
+
+#### Semantic Conventionsへの準拠について
+
+計装ライブラリが存在するだけでは不十分で、**OpenTelemetry Semantic Conventionsに準拠している**ことが相互運用性の観点から重要です。
+
+**OpenTelemetry公式Gen-AI Conventions**
+
+OpenTelemetryは[Gen-AI用のSemantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)を定義しており、`gen_ai.*`プレフィックスの属性を使用しています。
+ただし、現時点ではまだExperimental（実験的）ステータスです。
+
+**準拠状況の違い**
+
+- **OpenLLMetry**: OpenTelemetry公式のGen-AI Conventionsに準拠しており、[OpenLLMetryのSemantic ConventionsはOpenTelemetryの公式仕様に統合されています](https://community.dynatrace.com/t5/AI-Observability/OpenLLMetry-semantic-conventions-are-now-part-of-OpenTelemetry/m-p/267984)
+- **OpenInference**: [独自のSemantic Conventions](https://arize-ai.github.io/openinference/spec/semantic_conventions.html)を使用（例: `openinference.span.kind`, `llm.input_messages`など）。OpenTelemetry形式でのデータ送信は可能ですが、属性名が公式仕様と異なるため、バックエンドによっては解釈が変わる可能性があります
+
+この違いは、将来的にバックエンドを切り替える際や、異なるツール間でデータを共有する際に影響する可能性があるため、選択時に考慮すべき点です。
 
 ### 生成AIライブラリにおける計装状況について
 
